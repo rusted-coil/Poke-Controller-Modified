@@ -1468,7 +1468,7 @@ commands = {
     '無限きのみ(ランクマ)': InfinityBerry,
     '無限カフェ(ランクマ)': InfinityCafe,
     '自動リーグ周回(画像認識)': AutoLeagueIP,
-    '無限羽回収(ランクマ/画像認識)': InfinityFeather,
+    '無限羽回収(ランクマ)': InfinityFeather,
     '自動孵化': Hatch,
     'seed消費': Seedconsume,
     'Box逃がし': Release,
