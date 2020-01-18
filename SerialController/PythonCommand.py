@@ -1411,12 +1411,13 @@ class Tower_loop2(ImageProcPythonCommand):  # 受付からスタート
                 self.press(Button.A, wait=0.5)
 
 
-class InfinityFeather(ImageProcPythonCommand, RankGlitchPythonCommand):
-    def __init__(self, name, cam):
-        super(InfinityFeather, self).__init__(name, cam)
+class InfinityFeather(RankGlitchPythonCommand):
+    def __init__(self, name):
+        super(InfinityFeather, self).__init__(name)
 
     def do(self):
-        start = time.time()
+        # 時間確認用。使用時は "import time" すること
+        # start = time.time()
         i = 0
         print('Start collecting feathers')
         while self.checkIfAlive():
@@ -1424,12 +1425,10 @@ class InfinityFeather(ImageProcPythonCommand, RankGlitchPythonCommand):
             i += 1
             print('Map')
             self.press(Button.X, wait=1.5)
-            self.press(Button.A)
-            self.loopwhileImage('map.png')
+            self.press(Button.A, wait=3.0)
             self.press(Direction(Stick.LEFT, 45), duration=0.05)
             self.press(Button.A, wait=1)
-            self.press(Button.A)
-            self.loopwhileImage('wifi.png')
+            self.press(Button.A, wait=4.0)
             print('pick feather')
             self.press([Direction.RIGHT, Direction.DOWN], duration=0.15)
             self.press(Direction.RIGHT, duration=3)
@@ -1439,8 +1438,8 @@ class InfinityFeather(ImageProcPythonCommand, RankGlitchPythonCommand):
             self.press(Button.A, wait=0.3)
             print('Time leap')
             self.timeLeap()
-            tm = round(time.time() - start, 2)
-            print('Loop : {} in {} sec. Average: {} sec/loop'.format(i, tm, round(tm / i, 2)))
+            # tm = round(time.time() - start, 2)
+            # print('Loop : {} in {} sec. Average: {} sec/loop'.format(i, tm, round(tm / i, 2)))
 
 
 # sample initial code
