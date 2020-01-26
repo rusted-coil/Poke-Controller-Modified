@@ -40,7 +40,7 @@ class PythonCommand(Command.Command):
 		except:
 			if self.keys is None:
 				self.keys = Keys.KeyPress(ser)
-			print('interruppt')
+			print('interrupt')
 			import traceback
 			traceback.print_exc()
 			self.keys.end()
@@ -169,7 +169,7 @@ class ImageProcPythonCommand(PythonCommand):
 		self.camera = cam
 
 	# Judge if current screenshot contains an image using template matching
-	# It's recommended that you use gray_scale option unless the template color wouldn't be cared for performace
+	# It's recommended that you use gray_scale option unless the template color wouldn't be cared for performance
 	# 現在のスクリーンショットと指定した画像のテンプレートマッチングを行います
 	# 色の違いを考慮しないのであればパフォーマンスの点からuse_grayをTrueにしてグレースケール画像を使うことを推奨します
 	def isContainTemplate(self, template_path, threshold=0.7, use_gray=True, show_value=False):
@@ -197,7 +197,7 @@ class ImageProcPythonCommand(PythonCommand):
 		else:
 			return False
 
-	# Get interframe difference binarized image
+	# Get a binarized image by the interframe difference
 	# フレーム間差分により2値化された画像を取得
 	def getInterframeDiff(self, frame1, frame2, frame3, threshold):
 		diff1 = cv2.absdiff(frame1, frame2)
