@@ -131,15 +131,19 @@ class PythonCommand(CommandBase.Command):
 		# increment and decrement
 		if is_go_back:
 			self.press(Button.A, wait=0.2)
-			self.press(Direction.UP, wait=0.2) # Increment a year
-			self.press(Direction.RIGHT, duration=1.5)
+			self.press(Direction.UP, wait=0.2)  # Increment a year
+			# self.press(Direction.RIGHT, duration=1.5)
+			self.press(Button.A, duration=0.05, wait=0.03)
+			self.press(Button.A, duration=0.05, wait=0.03)
+			self.press(Button.A, duration=0.05, wait=0.03)
+			self.press(Button.A, duration=0.05, wait=0.03)
+			self.press(Button.A, duration=0.05, wait=0.03)
 			self.press(Button.A, wait=0.5)
 
+			self.press(Direction.UP, wait=0.1)
+			self.press(Direction.UP, wait=0.1)
 			self.press(Button.A, wait=0.2)
-			self.press(Direction.LEFT, duration=1.5)
-			self.press(Direction.DOWN, wait=0.2) # Decrement a year
-			self.press(Direction.RIGHT, duration=1.5)
-			self.press(Button.A, wait=0.5)
+			self.press(Button.A, wait=0.2)
 
 		# use only increment
 		# for use of faster time leap
@@ -147,8 +151,11 @@ class PythonCommand(CommandBase.Command):
 			self.press(Button.A, wait=0.2)
 			self.press(Direction.RIGHT)
 			self.press(Direction.RIGHT)
-			self.press(Direction.UP, wait=0.2) # increment a day
-			self.press(Direction.RIGHT, duration=1)
+			self.press(Direction.UP, wait=0.2)  # increment a day
+			# self.press(Direction.RIGHT, duration=1)
+			self.press(Button.A, duration=0.05, wait=0.03)
+			self.press(Button.A, duration=0.05, wait=0.03)
+			self.press(Button.A, duration=0.05, wait=0.03)
 			self.press(Button.A, wait=0.5)
 
 		self.press(Button.HOME, wait=1)
