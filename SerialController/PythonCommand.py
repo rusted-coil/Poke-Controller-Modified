@@ -9,6 +9,8 @@ import Command
 import Keys
 import cv2
 from Keys import Button, Direction, Stick
+import tkinter.simpledialog as simpledialog
+import tkinter as tk
 
 # the class For notifying stop signal is sent from Main window
 class StopThread(Exception):
@@ -152,11 +154,11 @@ class RankGlitchPythonCommand(PythonCommand):
 			self.press(Direction.UP, wait=0.1)
 			self.press(Button.A, wait=0.2)
 			self.press(Button.A, wait=0.2)
-			# self.press(Button.A, wait=0.2)
-			# self.press(Direction.LEFT, duration=1.5)
-			# self.press(Direction.DOWN, wait=0.2)  # Decrement a year
-			# self.press(Direction.RIGHT, duration=1.5)
-			# self.press(Button.A, wait=0.5)
+		# self.press(Button.A, wait=0.2)
+		# self.press(Direction.LEFT, duration=1.5)
+		# self.press(Direction.DOWN, wait=0.2)  # Decrement a year
+		# self.press(Direction.RIGHT, duration=1.5)
+		# self.press(Button.A, wait=0.5)
 
 		# use only increment
 		# for use of faster time leap
@@ -176,6 +178,8 @@ class RankGlitchPythonCommand(PythonCommand):
 
 
 TEMPLATE_PATH = "./Template/"
+
+
 class ImageProcPythonCommand(PythonCommand):
 	def __init__(self, name, cam):
 		super(ImageProcPythonCommand, self).__init__(name)
@@ -189,7 +193,7 @@ class ImageProcPythonCommand(PythonCommand):
 		src = self.camera.readFrame()
 		src = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY) if use_gray else src
 
-		template = cv2.imread(TEMPLATE_PATH+template_path, cv2.IMREAD_GRAYSCALE if use_gray else cv2.IMREAD_COLOR)
+		template = cv2.imread(TEMPLATE_PATH + template_path, cv2.IMREAD_GRAYSCALE if use_gray else cv2.IMREAD_COLOR)
 		w, h = template.shape[1], template.shape[0]
 
 		method = cv2.TM_CCOEFF_NORMED
@@ -225,11 +229,11 @@ class ImageProcPythonCommand(PythonCommand):
 		mask = cv2.medianBlur(img_th, 3)
 		return mask
 
-	def loopwhileImage(self, src, s=200):
+	def loopwhileImage(self, src, s=60):
 		print('Image recognition:{}'.format(src), end="")
-		tcount = 0
+		tcount = 0.0
 		while not self.isContainTemplate(src, 0.7):
-			tcount += 1
+			tcount += 0.25
 			self.wait(0.25)
 			if tcount > s:
 				print('Something wrong :{}'.format(src))  # force finish
@@ -251,6 +255,7 @@ class Sync(PythonCommand):
 		self.press(Button.A, 0.1, 2)
 		self.press(Button.HOME, 0.1, 1)
 		self.press(Button.A, 0.1, 0.5)
+
 
 # Unsync controller
 # 同期解除
@@ -281,6 +286,7 @@ class Mash_A(PythonCommand):
 			self.wait(0.5)
 			self.press(Button.A)
 
+
 # Auto league
 # 自動リーグ周回(画像認識なし)
 class AutoLeague(PythonCommand):
@@ -308,7 +314,8 @@ class AutoLeagueIP(ImageProcPythonCommand):
 		while self.checkIfAlive():
 
 			self.wait(0.5)
-			if self.isContainTemplate('League/fight.png'):  # or self.isContainTemplate('waza_setsumei.png', 0.8):  # たたかう
+			if self.isContainTemplate(
+					'League/fight.png'):  # or self.isContainTemplate('waza_setsumei.png', 0.8):  # たたかう
 				print('Fight')
 				self.press(Button.A, wait=1.5)
 				if self.isContainTemplate('League/daimax.png', 0.6):  # and not self.isContainTemplate(
@@ -330,7 +337,7 @@ class AutoLeagueIP(ImageProcPythonCommand):
 				self.press(Button.B, wait=1)
 			elif self.isContainTemplate('League/Tournament_next_battle.png', 0.95):  # 勝利時つぎにすすむ
 				self.press(Direction.UP, duration=4)
-			elif self.isContainTemplate('League/wifi.png', 0.8):  # Tournamentを始める
+			elif self.isContainTemplate('League/Network_Offline.png', 0.8):  # Tournamentを始める
 				self.press(Direction(Stick.LEFT, 90), duration=5)
 				self.press(Button.A, wait=1)
 				self.press(Button.A, wait=1)
@@ -356,7 +363,7 @@ class InfinityLottery(RankGlitchPythonCommand):
 			self.press(Button.B, wait=0.5)
 			self.press(Direction.DOWN, wait=0.5)
 
-			for _ in range(0, 10):	# A loop
+			for _ in range(0, 10):  # A loop
 				self.press(Button.A, wait=0.5)
 
 			for _ in range(0, 20):  # B loop
@@ -364,6 +371,7 @@ class InfinityLottery(RankGlitchPythonCommand):
 
 			# Time glitch
 			self.timeLeap()
+
 
 # using RankBattle glitch
 # Infinity getting berries
@@ -380,7 +388,7 @@ class InfinityBerry(ImageProcPythonCommand, RankGlitchPythonCommand):
 			if not self.cam.isOpened():
 				self.press(Button.A, wait=0.5)
 				self.press(Button.B, wait=0.5)
-				self.press(Button.A, wait=0.5) # yes
+				self.press(Button.A, wait=0.5)  # yes
 
 				for _ in range(0, 15):  # B loop
 					self.press(Button.B, wait=0.5)
@@ -391,11 +399,11 @@ class InfinityBerry(ImageProcPythonCommand, RankGlitchPythonCommand):
 			else:
 				self.press(Button.A, wait=0.5)
 				self.press(Button.B, wait=0.5)
-				self.press(Button.A, wait=0.5) # yes
+				self.press(Button.A, wait=0.5)  # yes
 
 				while True:
-					self.press(Button.A, wait=0.5) # for press 'shake more'
-					self.press(Button.A, wait=0.5) # just in case
+					self.press(Button.A, wait=0.5)  # for press 'shake more'
+					self.press(Button.A, wait=0.5)  # just in case
 					self.press(Button.A, wait=0.5)
 
 					while not self.isContainTemplate('fell_message.png'):
@@ -423,11 +431,11 @@ class InfinityBerry(ImageProcPythonCommand, RankGlitchPythonCommand):
 		zero_cnt = 0
 		height_half = int(self.camera.capture_size[1] / 2)
 
-		frame1 = cv2.cvtColor(self.camera.readFrame()[0:height_half-1, :], cv2.COLOR_BGR2GRAY)
+		frame1 = cv2.cvtColor(self.camera.readFrame()[0:height_half - 1, :], cv2.COLOR_BGR2GRAY)
 		sleep(check_interval / 3)
-		frame2 = cv2.cvtColor(self.camera.readFrame()[0:height_half-1, :], cv2.COLOR_BGR2GRAY)
+		frame2 = cv2.cvtColor(self.camera.readFrame()[0:height_half - 1, :], cv2.COLOR_BGR2GRAY)
 		sleep(check_interval / 3)
-		frame3 = cv2.cvtColor(self.camera.readFrame()[0:height_half-1, :], cv2.COLOR_BGR2GRAY)
+		frame3 = cv2.cvtColor(self.camera.readFrame()[0:height_half - 1, :], cv2.COLOR_BGR2GRAY)
 
 		while time < check_duration:
 			mask = self.getInterframeDiff(frame1, frame2, frame3, 15)
@@ -436,7 +444,7 @@ class InfinityBerry(ImageProcPythonCommand, RankGlitchPythonCommand):
 			frame1 = frame2
 			frame2 = frame3
 			sleep(check_interval)
-			frame3 = cv2.cvtColor(self.camera.readFrame()[0:height_half-1, :], cv2.COLOR_BGR2GRAY)
+			frame3 = cv2.cvtColor(self.camera.readFrame()[0:height_half - 1, :], cv2.COLOR_BGR2GRAY)
 
 			time += check_interval
 
@@ -449,9 +457,9 @@ class InfinityBerry(ImageProcPythonCommand, RankGlitchPythonCommand):
 # using RankBattle glitch
 # Auto cafe battles
 # 無限カフェ(ランクマッチ使用)
-class InfinityCafe(RankGlitchPythonCommand):
-	def __init__(self, name):
-		super(InfinityCafe, self).__init__(name)
+class InfinityCafe(ImageProcPythonCommand, RankGlitchPythonCommand):
+	def __init__(self, name, cam):
+		super(InfinityCafe, self).__init__(name, cam)
 		self.pp_max = 10
 
 	def do(self):
@@ -460,19 +468,24 @@ class InfinityCafe(RankGlitchPythonCommand):
 			for __ in range(0, self.pp_max):
 				self.wait(1)
 
-				for _ in range(0, 35):	# A loop
+				while not self.isContainTemplate("fight.png", 0.7):
 					self.press(Button.A, wait=0.5)
-				self.wait(5)
-
-				for _ in range(0, 45):  # B loop
-					self.press(Button.B, wait=0.5)
+				while not self.isContainTemplate("Network_Offline.png", 0.8):
+					self.press(Button.A, wait=2.0)
+				#
+				# for _ in range(0, 35):	# A loop
+				# 	self.press(Button.A, wait=0.5)
+				# self.wait(5)
+				#
+				# for _ in range(0, 45):  # B loop
+				# 	self.press(Button.B, wait=0.5)
 
 				self.timeLeap()
 
 			# go to pokemon center to restore PP
 			self.press(Direction.DOWN, duration=3.5)
 			self.press(Button.X, wait=1)
-			self.press(Button.A, wait=3) # open up a map
+			self.press(Button.A, wait=3)  # open up a map
 			self.press(Button.A, wait=1)
 			self.press(Button.A, wait=4)
 			self.press(Direction.UP, duration=0.2)
@@ -480,18 +493,19 @@ class InfinityCafe(RankGlitchPythonCommand):
 
 			# in pokemon center
 			self.press(Direction.UP, duration=2)
-			for _ in range(0, 10):	# A loop
+			for _ in range(0, 10):  # A loop
 				self.press(Button.A, wait=0.5)
-			for _ in range(0, 15):	# B loop
+			for _ in range(0, 25):  # B loop
 				self.press(Button.B, wait=0.5)
 			self.press(Direction.DOWN, duration=2, wait=2)
 
 			# move to cafe in Wyndon (Shoot City)
 			self.press(Direction.LEFT, duration=3)
 			self.press(Direction.UP, duration=4)
-			self.press(Direction.RIGHT, duration=1 ,wait=2)
+			self.press(Direction.RIGHT, duration=1, wait=2)
 
 			self.press(Direction.UP, duration=2, wait=1)
+
 
 # auto releaseing pokemons
 class AutoRelease(ImageProcPythonCommand):
@@ -511,14 +525,16 @@ class AutoRelease(ImageProcPythonCommand):
 				else:
 					# if shiny, then skip
 					if not self.isContainTemplate('shiny_mark.png', threshold=0.9):
-						if self.isContainTemplate('status.png', threshold=0.7): # Maybe this threshold works for only Japanese version.
+						if self.isContainTemplate('status.png',
+												  threshold=0.7):  # Maybe this threshold works for only Japanese version.
 							# Release a pokemon
 							self.Release()
 
-
 				if not j == self.col - 1:
-					if i % 2 == 0:	self.press(Direction.RIGHT, wait=0.2)
-					else:			self.press(Direction.LEFT, wait=0.2)
+					if i % 2 == 0:
+						self.press(Direction.RIGHT, wait=0.2)
+					else:
+						self.press(Direction.LEFT, wait=0.2)
 
 			self.press(Direction.DOWN, wait=0.2)
 
@@ -535,6 +551,7 @@ class AutoRelease(ImageProcPythonCommand):
 		self.press(Direction.UP)  # ↑
 		self.press(Button.A, wait=1.45)  # はい
 		self.press(Button.A, wait=0.2)
+
 
 # Egg hatching at count times
 # 指定回数の孵化(キャプボあり)
@@ -568,6 +585,7 @@ class CountHatching(ImageProcPythonCommand):
 			print('Elapsed time: {}\nAverage : {}'.format(tm, tm / self.hatched_num))
 			print('hatched_num: ' + str(self.hatched_num))
 
+
 # auto egg hatching using image recognition
 # 自動卵孵化(キャプボあり)
 class AutoHatching(ImageProcPythonCommand):
@@ -596,7 +614,7 @@ class AutoHatching(ImageProcPythonCommand):
 				if self.getNewEgg():
 					self.party_egg_num += 1
 				self.press(Direction.UP, duration=0.05, wait=0.5)
-				self.press(Direction.UP, duration=1)
+				self.press(Direction.UP_RIGHT, duration=1)
 
 				# hatch eggs
 				while self.party_num < 6:
@@ -613,7 +631,7 @@ class AutoHatching(ImageProcPythonCommand):
 
 					self.holdEnd([Direction.RIGHT, Direction.R_LEFT])
 					if self.hatched_num == 0:
-						self.egg_spawn_time = int((time.time() - start_time) / 1.9)
+						self.egg_spawn_time = int((time.time() - start_time) / 1.8)
 
 					if self.isContainTemplate('egg_notice.png') or self.isContainTemplate('dialogue.png', 0.85):
 						self.hatched_num += 1
@@ -622,11 +640,11 @@ class AutoHatching(ImageProcPythonCommand):
 						self.party_num += 1
 
 						self.is_hatching = True
-						self.egg_spawn_time -= 3
+						# self.egg_spawn_time -= 3
 						print('egg hatching')
 						self.press(Button.A)
 						self.wait(15)
-						for j in range(0, 5):
+						while not self.isContainTemplate('Network_Offline.png'):
 							self.press(Button.A, wait=1)
 						print('party_num: ' + str(self.party_num) + ', party_egg_num: ' + str(self.party_egg_num))
 						print('all hatched num: ' + str(self.hatched_num))
@@ -634,7 +652,7 @@ class AutoHatching(ImageProcPythonCommand):
 						print('Average time per egg: ' + str(round((time.time() - initial_time) / self.hatched_num, 2)))
 					else:
 						self.is_hatching = False
-						self.egg_spawn_time += 6
+						# self.egg_spawn_time += 6
 						print('next egg.')
 
 					self.press(Button.X, wait=1)
@@ -656,7 +674,7 @@ class AutoHatching(ImageProcPythonCommand):
 						if self.getNewEgg():
 							self.party_egg_num += 1
 						self.press(Direction.UP, duration=0.05, wait=0.5)
-						self.press(Direction.UP, duration=1)
+						self.press(Direction.UP_RIGHT, duration=1)
 
 				# open up pokemon box
 				self.press(Button.X, wait=1)
@@ -702,7 +720,7 @@ class AutoHatching(ImageProcPythonCommand):
 			self.press(Button.B, wait=1)
 			self.press(Button.B, wait=1)
 			self.press(Button.B, wait=1)
-			# self.finish()  # TODO
+		# self.finish()  # TODO
 		else:
 			print('egg found')
 			self.press(Button.A, wait=1)
@@ -793,10 +811,13 @@ class InfinityWatt(RankGlitchPythonCommand):
 		self.use_rank = is_use_rank
 
 	def do(self):
-		n = int(input('Loop number'))
+		# n = int(input('Loop number'))
+		n = MyDialog.input_value(self, "Loop number")
 		i = 0
 		while True:
 			i += 1
+			if n != 0 and i >= n:
+				self.finish()
 			print('------------Loop : ', i)
 			self.wait(1)
 
@@ -866,8 +887,6 @@ class InfinityWatt(RankGlitchPythonCommand):
 				self.press(Button.HOME, wait=1)  # ゲームに戻る
 				self.press(Button.HOME, wait=1)
 
-			if n != 0 and i >= n:
-				self.finish()
 
 
 class HoldTest(PythonCommand):
@@ -1025,22 +1044,23 @@ class Seedconsume(ImageProcPythonCommand):
 		super(Seedconsume, self).__init__(name, cam)
 
 	def change_day(self):
-		self.press(Button.A, duration=0.04, wait=0.12)
-		self.press(Direction.LEFT, duration=0.04, wait=0.04)
-		self.press(Direction.LEFT, duration=0.04, wait=0.04)
-		self.press(Direction.LEFT, duration=0.04, wait=0.01)
-		self.press(Direction.UP, duration=0.04, wait=0.01)  # increment a day
+		self.press(Button.A, duration=0.05, wait=0.15)
+		self.press(Direction.LEFT, duration=0.05, wait=0.05)
+		self.press(Direction.LEFT, duration=0.05, wait=0.05)
+		self.press(Direction.LEFT, duration=0.05, wait=0.01)
+		self.press(Direction.UP, duration=0.05, wait=0.01)  # increment a day
 		# self.press(Direction.RIGHT, wait=0.05)
 		# self.press(Direction.RIGHT, wait=0.05)
 		# self.press(Direction.RIGHT, wait=0.05)
-		self.press(Button.A, duration=0.04, wait=0.04)
-		self.press(Button.A, duration=0.04, wait=0.04)
-		self.press(Button.A, duration=0.04, wait=0.04)
-		self.press(Button.A, duration=0.04, wait=0.12)
+		self.press(Button.A, duration=0.05, wait=0.05)
+		self.press(Button.A, duration=0.05, wait=0.05)
+		self.press(Button.A, duration=0.05, wait=0.05)
+		self.press(Button.A, duration=0.05, wait=0.15)
 
 	def do(self):
 		self.wait(1)
-		loops = int(input("input how many loops"))
+		# loops = int(input("input how many loops"))
+		loops = MyDialog.input_value(self, "Loops")
 		print('Now to start {} loops for consuming seed'.format(loops))
 		ndiv = loops // 30
 		ndiv_ = loops - ndiv * 30
@@ -1065,7 +1085,7 @@ class raid_search(ImageProcPythonCommand):  # ワット回収済みレイドの�
 		super(raid_search, self).__init__(name, cam)
 
 	def do(self):
-		searchfor = 'dosaidon.png'  # Silhouette
+		searchfor = 'shandera.png'  # Silhouette
 		print('Start searching {}'.format(searchfor))
 		s = time.time()
 		j = 1
@@ -1075,8 +1095,8 @@ class raid_search(ImageProcPythonCommand):  # ワット回収済みレイドの�
 			for i in range(3):
 				i += 1
 				print('{}日目'.format(i))
-				self.press(Button.A, wait=1.5)
-				self.loopwhileImage('minnade.png', 100)
+				self.press(Button.A, wait=2.0)
+				# self.loopwhileImage('minnade.png', 100)
 				self.press(Button.A, wait=3)  # レイド開始
 
 				self.press(Button.HOME, wait=1)
@@ -1114,7 +1134,7 @@ class raid_search(ImageProcPythonCommand):  # ワット回収済みレイドの�
 
 				self.press(Button.B, wait=1)
 				self.press(Button.A)  # レイドをやめる
-				self.loopwhileImage('wifi.png', 100)
+				self.loopwhileImage('Network_Offline.png', 100)
 				self.wait(0.5)
 				self.press(Button.A, wait=1.5)
 				self.press(Button.A, wait=1.5)  # 2000W
@@ -1162,7 +1182,7 @@ class raid_search(ImageProcPythonCommand):  # ワット回収済みレイドの�
 					self.press(Direction.RIGHT, wait=0.1)
 					self.press(Button.A, wait=0.5)
 					self.press(Button.HOME, wait=1)  # ゲームに戻る
-				self.press(Button.A, wait=1.0)  # Choose game
+				self.press(Button.A, wait=2.0)  # Choose game
 				# self.press(Button.A, wait=18.0)  # User selection
 				self.press(Button.A)  # User selection
 				self.loopwhileImage('OP.png', 500)
@@ -1178,26 +1198,26 @@ class raid_loop(ImageProcPythonCommand):  # 周回するワット回収済みレ
 		print('Start loop')
 		s = time.time()
 		j = 1
-		while self.checkIfAlive():
+		while True:
 			self.wait(1)
 			print('{}周目'.format(j), end="")
-			self.loopwhileImage('wifi.png', 100)
+			self.loopwhileImage('Network_Offline.png', 10)
 			self.press(Button.Y)  # YY-COMMUNICATION
-			self.loopwhileImage('internet.png', 100)
+			self.loopwhileImage('internet.png', 10)
 			self.press(Button.PLUS, wait=10)  # Internet
-			self.loopwhileImage('dialogue.png', 100)
+			self.loopwhileImage('dialogue.png', 10)
 			self.press(Button.B, wait=1)
 			self.press(Button.B)  # back to wild-area
-			self.loopwhileImage('wifi_online.png', 100)  # online check
+			self.loopwhileImage('Network_Online.png', 10)  # online check
 			self.wait(0.5)
 			self.press(Button.A, wait=5)  # open raid
 			self.press(Button.A, wait=1)  # open raid
-			self.loopwhileImage('change_pokemon.png', 100)  # timing check
+			self.loopwhileImage('change_pokemon.png', 10)  # timing check
 			self.press(Direction.UP, wait=0.5)  # 準備完了
 			self.press(Button.A, wait=0.5)  # 準備完了
 			if self.isContainTemplate('start_battle.png'):
 				t = 0
-				while t < 180:  # wait for 180 sec
+				while t < 160:  # wait for 180 sec
 					t += 1
 					if self.isContainTemplate('4check.png', 0.85):
 						self.press(Button.A)  # start if there are 4 people checked
@@ -1205,22 +1225,23 @@ class raid_loop(ImageProcPythonCommand):  # 周回するワット回収済みレ
 						break
 					else:
 						self.wait(1.0)
-			for i in range(10):
-				self.press(Button.A, wait=0.8)
-			while not self.isContainTemplate('catch_or_not.png'):  # To quit game
-				if self.isContainTemplate('fight.png'):  # press A
-					for i in range(8):
-						self.press(Button.A, wait=0.5)
-			j += 1
+			if not self.isContainTemplate("lonely.png", 0.9):
+				for i in range(10):
+					self.press(Button.A, wait=0.8)
+				while not self.isContainTemplate('catch_or_not.png'):  # To quit game
+					if self.isContainTemplate('fight.png') or self.isContainTemplate('cheers.png'):  # press A
+						for i in range(8):
+							self.press(Button.A, wait=0.5)
+				j += 1
 			self.press(Button.HOME, wait=2)  # EXIT Game
 			self.press(Button.X, wait=0.6)
 			self.press(Button.A, wait=2.5)  # closed
 			self.press(Button.A, wait=1.0)  # Choose game
 			self.press(Button.A)  # User selection
-			self.loopwhileImage('OP.png', 500)  # recognize Opening
+			self.loopwhileImage('OP.png', 30)  # recognize Opening
 			self.press(Button.A, wait=7.0)  # load save-data
 			print('{} s 経過'.format(time.time() - s))
-	# if not self.checkIfAlive(): return
+# if not self.checkIfAlive(): return
 
 
 # レイド周回
@@ -1232,21 +1253,21 @@ class three_day_raid_loop(ImageProcPythonCommand, RankGlitchPythonCommand):  # �
 		print('Start loop')
 		s = time.time()
 		j = 1
-		while self.checkIfAlive():
+		while True:
 			self.wait(1)
 			print('{}周目'.format(j), end="")
 			for i in range(3):
 				i += 1
 				print('{}日目'.format(i))
-				self.press(Button.A, wait=1.5)
-				self.loopwhileImage('minnade.png', 100)
-				self.press(Button.A, wait=3)  # レイド開始
+				self.press(Button.A, wait=3.0)
+				self.press(Button.A, wait=3.0)  # レイド開始
 
 				self.timeLeap(False)
 
 				self.press(Button.B, wait=1)
 				self.press(Button.A)  # レイドをやめる
-				self.loopwhileImage('wifi.png', 100)
+				while not self.isContainTemplate('Network_Offline.png', 0.8):
+					self.wait(0.5)
 				self.wait(0.5)
 				self.press(Button.A, wait=1.5)
 				self.press(Button.A, wait=1.5)  # 2000W
@@ -1257,25 +1278,30 @@ class three_day_raid_loop(ImageProcPythonCommand, RankGlitchPythonCommand):  # �
 			self.press(Button.B, wait=1)
 			self.press(Button.B, wait=1)
 			self.press(Button.B, wait=1)
-			self.loopwhileImage('wifi.png', 100)
+			while not self.isContainTemplate('Network_Offline.png', 0.8):
+				self.wait(0.5)
 			self.timeLeap()
 			self.wait(0.5)
 			self.press(Button.Y)  # YY-COMMUNICATION
-			self.loopwhileImage('internet.png', 100)
+			while not self.isContainTemplate('internet.png', 0.8):
+				self.wait(0.5)
 			self.press(Button.PLUS, wait=10)  # Internet
-			self.loopwhileImage('dialogue.png', 100)
+			while not self.isContainTemplate('dialogue.png', 0.8):
+				self.wait(0.5)
 			self.press(Button.B, wait=1)
 			self.press(Button.B)  # back to wild-area
-			self.loopwhileImage('wifi_online.png', 100)  # online check
+			while not self.isContainTemplate('Network_Online.png', 0.8): # online check
+				self.wait(0.5)
 			self.wait(0.5)
 			self.press(Button.A, wait=5)  # open raid
 			self.press(Button.A, wait=1)  # open raid
-			self.loopwhileImage('change_pokemon.png', 100)  # timing check
+			while not self.isContainTemplate('change_pokemon.png', 0.8): # timing check
+				self.wait(0.5)
 			self.press(Direction.UP, wait=0.5)  # 準備完了
 			self.press(Button.A, wait=0.5)  # 準備完了
 			if self.isContainTemplate('start_battle.png'):
 				t = 0
-				while t < 90:  # wait for 90 sec
+				while t < 160:  # wait for 160 sec
 					t += 1
 					if self.isContainTemplate('4check.png', 0.85):
 						self.press(Button.A)  # start if there are 4 people checked
@@ -1283,22 +1309,24 @@ class three_day_raid_loop(ImageProcPythonCommand, RankGlitchPythonCommand):  # �
 						break
 					else:
 						self.wait(1.0)
-			for i in range(10):
-				self.press(Button.A, wait=0.8)
-			while not self.isContainTemplate('catch_or_not.png'):  # To quit game
-				if self.isContainTemplate('fight.png'):  # press A
-					for i in range(8):
-						self.press(Button.A, wait=0.5)
-			j += 1
+			if not self.isContainTemplate("lonely.png", 0.9):
+				for i in range(10):
+					self.press(Button.A, wait=0.8)
+				while not self.isContainTemplate('catch_or_not.png'):  # To quit game
+					if self.isContainTemplate('fight.png') or self.isContainTemplate('cheers.png'):  # press A
+						for i in range(8):
+							self.press(Button.A, wait=0.5)
+				j += 1
 			self.press(Button.HOME, wait=2)  # EXIT Game
 			self.press(Button.X, wait=0.6)
 			self.press(Button.A, wait=2.5)  # closed
-			self.press(Button.A, wait=1.0)  # Choose game
+			self.press(Button.A, wait=2.0)  # Choose game
 			self.press(Button.A)  # User selection
-			self.loopwhileImage('OP.png', 500)  # recognize Opening
+			while not self.isContainTemplate('OP.png', 0.7): # recognize Opening
+				self.wait(1)
 			self.press(Button.A, wait=7.0)  # load save-data
 			print('{} s 経過'.format(time.time() - s))
-	# if not self.checkIfAlive(): return
+# if not self.checkIfAlive(): return
 
 
 # タワー周回(移植)
@@ -1345,7 +1373,8 @@ class Tower_loop2(ImageProcPythonCommand):  # 受付からスタート
 				self.wait(1.5)
 				if self.isContainTemplate('Tower/Fainted.png', 0.9):  # 瀕死が2体居たとき用
 					self.press(Direction.DOWN, wait=1)
-				self.press(Button.A, wait=1)
+				self.press(Button.A, wait=0.5)
+				self.press(Button.A, wait=0.5)
 				self.press(Button.A, wait=1)
 			elif self.isContainTemplate('Tower/choose.png', 0.7):
 				self.wait(1.5)
@@ -1393,8 +1422,9 @@ class InfinityFeather(RankGlitchPythonCommand):
 			self.press(Button.A, wait=0.3)
 			print('Time leap')
 			self.timeLeap()
-			# tm = round(time.time() - start, 2)
-			# print('Loop : {} in {} sec. Average: {} sec/loop'.format(i, tm, round(tm / i, 2)))
+		# tm = round(time.time() - start, 2)
+		# print('Loop : {} in {} sec. Average: {} sec/loop'.format(i, tm, round(tm / i, 2)))
+
 
 class Fossil_shiny(ImageProcPythonCommand):
 	def __init__(self, name, cam):
@@ -1404,24 +1434,25 @@ class Fossil_shiny(ImageProcPythonCommand):
 	head = {0 : "カセキのトリ", 1 : "カセキのサカナ"}
 	body = {0 : "カセキのリュウ", 1 : "カセキのクビナガ"}
 	'''
+
 	def fossil_loop(self, head=0, body=0):
 		start = time.time()
 		i = 0
 		while True:
 			for j in range(30):
-				print(str(30*i+j+1)+"体目 ({}/30 of a box)".format(j+1))
+				print(str(30 * i + j + 1) + "体目 ({}/30 of a box)".format(j + 1))
 				self.press(Button.A, wait=0.75)
 				self.press(Button.A, wait=0.75)
 
 				if head == 1:
-					self.press(Direction.DOWN, duration=0.07, wait=0.75) # select fossil
-				self.press(Button.A, wait=0.75) # determine fossil
+					self.press(Direction.DOWN, duration=0.07, wait=0.75)  # select fossil
+				self.press(Button.A, wait=0.75)  # determine fossil
 
 				if body == 1:
 					self.press(Direction.DOWN, duration=0.07, wait=0.75)  # select fossil
-				self.press(Button.A, wait=0.75) # determine fossil
+				self.press(Button.A, wait=0.75)  # determine fossil
 
-				self.press(Button.A, wait=0.75) # select "それでよければ"
+				self.press(Button.A, wait=0.75)  # select "それでよければ"
 				while not self.isContainTemplate('Network_Offline.png', 0.8):
 					self.press(Button.B, wait=0.5)
 				self.wait(1.0)
@@ -1444,7 +1475,7 @@ class Fossil_shiny(ImageProcPythonCommand):
 			self.press(Button.A, wait=2.5)  # closed
 			self.press(Button.A, wait=2.0)  # Choose game
 			self.press(Button.A)  # User selection
-			while not self.isContainTemplate('OP.png', 0.7): # recognize Opening
+			while not self.isContainTemplate('OP.png', 0.7):  # recognize Opening
 				self.wait(0.2)
 			self.press(Button.A)  # load save-data
 			while not self.isContainTemplate('Network_Offline.png', 0.8):
@@ -1471,33 +1502,151 @@ class Fossil_shiny(ImageProcPythonCommand):
 			self.press(Direction.DOWN, wait=0.2)
 		return False
 
-class Fossil_shiny_00(Fossil_shiny): # パッチラゴン
+
+class Fossil_shiny_00(Fossil_shiny):  # パッチラゴン
 	def __init__(self, name, cam):
 		super(Fossil_shiny, self).__init__(name, cam)
 
 	def do(self):
 		self.fossil_loop(0, 0)
 
-class Fossil_shiny_01(Fossil_shiny): # パッチルドン
+
+class Fossil_shiny_01(Fossil_shiny):  # パッチルドン
 	def __init__(self, name, cam):
 		super(Fossil_shiny, self).__init__(name, cam)
 
 	def do(self):
 		self.fossil_loop(0, 1)
 
-class Fossil_shiny_10(Fossil_shiny): # ウオノラゴン
+
+class Fossil_shiny_10(Fossil_shiny):  # ウオノラゴン
 	def __init__(self, name, cam):
 		super(Fossil_shiny, self).__init__(name, cam)
 
 	def do(self):
 		self.fossil_loop(1, 0)
 
-class Fossil_shiny_11(Fossil_shiny): # ウオチルドン
+
+class Fossil_shiny_11(Fossil_shiny):  # ウオチルドン
 	def __init__(self, name, cam):
 		super(Fossil_shiny, self).__init__(name, cam)
 
 	def do(self):
 		self.fossil_loop(1, 1)
+
+class AutoRaid(ImageProcPythonCommand):
+	def __init__(self, name, cam):
+		super(AutoRaid, self).__init__(name, cam)
+
+	def do(self):
+		loop = 1
+		while True:
+			print(f"loop : {loop}")
+			self.wait(1.0)
+			print("Go Solo Raid battle.")
+			while not self.isContainTemplate("raid_menu.png", 0.9):
+				self.press(Button.A, wait=1.5)
+			self.press(Direction.DOWN, duration=0.07, wait=1.0)
+			self.press(Button.A, wait=1.5)
+			self.press(Button.A, wait=1.5)
+			print("Raid battle start.")
+			while not self.isContainTemplate("catch_or_not.png", 0.7):
+				if self.isContainTemplate('fight.png') or self.isContainTemplate("cheers.png", 0.8):  # press A
+					for i in range(8):
+						self.press(Button.A, wait=0.5)
+				if self.isContainTemplate("Network_Offline.png", 0.8):
+					break
+			print("Raid Battle Finish")
+			if self.isContainTemplate("catch_or_not.png", 0.7):
+				self.press(Direction.DOWN, duration=0.07, wait=1.0)
+			while not self.isContainTemplate("Network_Offline.png", 0.8):
+				self.press(Button.A, wait=1.0)
+			loop += 1
+			# self.press(Direction.UP, duration=0.07, wait=1.0)
+
+# マジカル交換
+class Magical_Trade(PythonCommand):
+	def __init__(self, name):
+		super(Magical_Trade, self).__init__(name)
+		self.maxpcnt = 30 # ポケモン交換したい数
+		self.pcnt = 0 # ポケモンの数
+
+	def do(self):
+		while True:
+			if self.pcnt < self.maxpcnt:
+				self.pcnt += 1
+			# 開始
+				self.press(Button.Y, wait=1.5)
+				self.press(Direction.DOWN, wait=1.0)
+				self.press(Button.A, wait=3.0)
+				# ポケモン選択
+				self.pselect()
+				self.wait(1.0)
+				self.press(Button.A, wait=1.0)
+				self.press(Button.A, wait=6.0)
+				self.press(Button.A, wait=1.0)
+				self.press(Button.A, wait=1.0)
+				self.press(Button.A, wait=90)
+
+				# 交換相手検索中
+
+				self.press(Button.Y, wait=60)
+				self.press(Button.A, wait=1.0)
+				self.press(Button.A, wait=1.0)
+				self.press(Button.A, wait=1.0)
+				self.press(Button.A, wait=1.0)
+				self.press(Button.A, wait=1.0)
+
+			else:
+				self.wait(1.0)
+				print('done')
+				self.finish()
+
+
+	def pselect(self):
+		bcnt = (self.pcnt - 1) % 30 + 1
+		x = (bcnt -1) % 6
+		# y = (bcnt -1) / 6
+		y = (bcnt -1) // 6 #整数除算
+
+		# for i = 0, i < x, i += 1
+		for i in range(0, x, 1):
+			self.press(Direction.RIGHT, wait=0.5)
+
+		# for i = 0, i < y, i += 1
+		for i in range(0, y, 1):
+			self.press(Direction.DOWN, wait=0.5)
+
+
+
+
+class MyDialog(simpledialog.Dialog):
+	def __init__(self, parent, title):
+		super(MyDialog, self).__init__(parent, title)
+
+	def body(self, master):
+		self.geometry("200x75")
+		tk.Label(master, text="Input Value").grid(row=0)
+		self.e1 = tk.Entry(master)
+		self.e1.grid(row=0, column=1)
+		return self.e1  # initial focus
+
+	def apply(self):
+		first = self.e1.get()
+		self.result = first
+
+	def input_value(self, title=""):
+		root1 = tk.Tk()
+		root1.withdraw()
+		value = MyDialog(root1, title)
+		try:
+			ret_value = int(value.result)
+		except:
+			print("数値を入力してください")
+			ret_value = 0
+		return ret_value
+
+
 
 # sample initial code
 # Copy and paste this class and write codes in start method.
@@ -1537,7 +1686,10 @@ commands = {
 	'タワー周回(画像認識)': Tower_loop2,
 	'シード消費後レイド探し(画像認識)': raid_search,
 	'3日後レイド配布(画像認識)': three_day_raid_loop,
-	'レイド配布(画像認識)': raid_loop
+	'レイド配布(画像認識)': raid_loop,
+	'レイド周回(画像認識)': AutoRaid,
+	'マジカル交換': Magical_Trade
+
 }
 
 # Add commands as utility you want to use
