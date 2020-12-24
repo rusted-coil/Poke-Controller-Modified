@@ -12,6 +12,7 @@ class GuiSettings:
 		self.camera_id = tk.IntVar(value=0)
 		self.com_port = tk.IntVar(value=0)
 		self.fps = tk.StringVar(value='45')
+		self.show_size = tk.StringVar(value='640x360')
 		self.is_show_realtime = tk.BooleanVar(value=True)
 		self.is_show_serial = tk.BooleanVar(value=False)
 		self.is_use_keyboard = tk.BooleanVar(value=True)

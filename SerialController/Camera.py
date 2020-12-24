@@ -6,10 +6,11 @@ import cv2
 import time, datetime
 
 class Camera:
-	def __init__(self):
+	def __init__(self, fps=45):
 		self.camera = None
 		self.capture_size = (1280, 720)
 		self.capture_dir = "Captures"
+		self.fps = int(fps)
 
 	def openCamera(self, cameraId):
 		if self.camera is not None and self.camera.isOpened():
@@ -24,7 +25,11 @@ class Camera:
 			print("Camera ID " + str(cameraId) + " can't open.")
 			return
 		print("Camera ID " + str(cameraId) + " opened successfully")
-		self.camera.set(cv2.CAP_PROP_FPS, 60)
+		print("Capture Width: {}".format(self.camera.get(cv2.CAP_PROP_FRAME_WIDTH)))
+		print("Capture Height: {}".format(self.camera.get(cv2.CAP_PROP_FRAME_HEIGHT)))
+		# print("Capture FPS: {}".format(self.camera.get(cv2.CAP_PROP_FPS)))
+
+		self.camera.set(cv2.CAP_PROP_FPS, self.fps)
 		self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, self.capture_size[0])
 		self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.capture_size[1])
 
