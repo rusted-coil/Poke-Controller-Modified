@@ -3,6 +3,7 @@
 
 from Commands.PythonCommandBase import PythonCommand, ImageProcPythonCommand
 from Commands.Keys import KeyPress, Button, Direction, Stick
+import time
 
 
 # auto egg hatching using image recognition
@@ -10,8 +11,8 @@ from Commands.Keys import KeyPress, Button, Direction, Stick
 class AutoHatching_2(ImageProcPythonCommand):
 	NAME = '自動卵孵化　改'
 
-	def __init__(self, name, cam):
-		super().__init__(name, cam)
+	def __init__(self, cam):
+		super().__init__(cam)
 		self.cam = cam
 		self.party_num = 1  # don't count eggs
 		self.party_egg_num = 0  # eggs count in party

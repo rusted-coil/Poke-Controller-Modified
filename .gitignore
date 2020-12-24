@@ -118,3 +118,9 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+.idea/inspectionProfiles/profiles_settings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/Poke-Controller_edit.iml
+.idea/vcs.xml
+SerialController/Template/20200802132028_1.jpg
