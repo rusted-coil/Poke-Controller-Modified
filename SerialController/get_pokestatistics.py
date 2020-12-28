@@ -191,7 +191,6 @@ class GetFromHomeGUI:
             isSingle = 1
         else:
             isSingle = 0
-        print(isSingle,list(self.rank_match_result_dic['list'][self.season.get()].keys())[1 - isSingle])
         poke_w = self.get_rank_poke_data(
             list(self.rank_match_result_dic['list'][self.season.get()].keys())[1 - isSingle],
             self.rank_match_result_dic['list'][self.season.get()][str(10001 + 10 * int(self.season.get()) + isSingle)][
