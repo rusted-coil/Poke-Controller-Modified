@@ -14,10 +14,11 @@ from CommandLoader import CommandLoader
 from Commands import PythonCommandBase, McuCommandBase, Sender
 from Commands.Keys import KeyPress
 from GuiAssets import MyScrolledText, CaptureArea, ControllerGUI
+from get_pokestatistics import GetFromHomeGUI
 from Keyboard import SwitchKeyboardController
 
 NAME = "Poke-Controller"
-VERSION = "1.0-beta3 (V1.1 Modified by Moi)"
+VERSION = "1.0-beta3 (V1.2 Modified by Moi)"
 
 
 # Main GUI
@@ -34,6 +35,7 @@ class GUI:
             relief='flat',
             borderwidth=5)
         self.controller = None
+        self.poke_treeview = None
         self.keyPress = None
         self.keyboard = None
 
@@ -42,6 +44,7 @@ class GUI:
         self.serial_lf = ttk.Labelframe(self.frame1, text='Serial Settings', padding=5)
         self.camera_lf = ttk.Labelframe(self.frame1, text='Camera', padding=5)
         self.control_lf = ttk.Labelframe(self.frame1, text='Controller', padding=5)
+        self.Poke_statistic_lf = ttk.Labelframe(self.frame1, text='Pokemon Home', padding=5)
 
         # frames
         self.camera_f1 = ttk.Frame(self.camera_lf, relief='flat')
@@ -175,7 +178,7 @@ class GUI:
         self.show_size_cb.pack(side=tk.LEFT, padx=5)
 
         # serial
-        self.serial_lf.grid(row=1, column=0, sticky='nw')
+        self.serial_lf.grid(row=1, column=0, sticky='news')
         self.serial_f1.grid(row=0, column=0, sticky='nw')
         self.serial_f2.grid(row=1, column=0, sticky='nw', pady=(5, 0))
         self.label2.pack(side=tk.LEFT)
@@ -184,17 +187,23 @@ class GUI:
         self.cb_show_ser.pack(side=tk.LEFT)
 
         # controller simulator
-        self.control_lf.grid(row=1, column=1, sticky='ne')
+        self.control_lf.grid(row=1, column=1, sticky='news')
         self.cb_use_keyboard.grid(row=0, column=0)
         self.simpleConButton.grid(row=1, column=0, pady=(5, 0))
 
         # commands selection
-        self.lf.grid(row=1, column=2, rowspan=3, sticky='ne')
+        self.lf.grid(row=1, column=2, rowspan=3, sticky='news')
         self.rb1.grid(row=0, column=0, sticky='w')
         self.rb2.grid(row=1, column=0, sticky='w')
         self.setCommandCmbbox()
         self.reloadCommandButton.grid(row=3, column=1, sticky='e', pady=(10, 0))
         self.startButton.grid(row=3, column=2, sticky='e', pady=(10, 0))
+
+        # Open Pokemon Home Window
+        self.Poke_statistic_lf.grid(row=4, column=2, sticky='news')
+        self.OpenPokeButton = ttk.Button(self.Poke_statistic_lf, text='技採用率', command=self.createGetFromHomeWindow)
+        self.OpenPokeButton.grid(row=0, column=0, pady=(10, 0))
+
 
         for child in self.frame1.winfo_children():
             if not type(child) is ttk.Combobox:
@@ -318,6 +327,15 @@ class GUI:
         window.protocol("WM_DELETE_WINDOW", self.closingController)
         self.controller = window
 
+    def createGetFromHomeWindow(self):
+        if not self.poke_treeview is None:
+            self.poke_treeview.focus_force()
+            return
+
+        window2 = GetFromHomeGUI(self.root)
+        window2.protocol("WM_DELETE_WINDOW", self.closingGetFromHome)
+        self.poke_treeview = window2
+
     def activateKeyboard(self):
         if self.settings.is_use_keyboard.get() == True:
             # enable Keyboard as controller
@@ -343,6 +361,10 @@ class GUI:
     def closingController(self):
         self.controller.destroy()
         self.controller = None
+
+    def closingGetFromHome(self):
+        self.poke_treeview.destroy()
+        self.poke_treeview = None
 
     def onFocusInController(self, event):
         # enable Keyboard as controller

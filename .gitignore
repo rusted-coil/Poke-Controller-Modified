@@ -9,7 +9,8 @@
 *.sym
 *.eep
 *.exe
-*.json
+# *.json
+settings.json
 LUFA/
 SerialController/Captures/
 SerialController/settings.poke
@@ -123,3 +124,5 @@ venv.bak/
 .idea/misc.xml
 .idea/modules.xml
 .idea/Poke-Controller_edit.iml
+.idea/Poke-Controller_modified.iml
+SerialController/awake.bat
