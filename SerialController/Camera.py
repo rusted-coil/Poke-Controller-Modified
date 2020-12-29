@@ -28,10 +28,10 @@ class Camera:
 		print("Capture Width: {}".format(self.camera.get(cv2.CAP_PROP_FRAME_WIDTH)))
 		print("Capture Height: {}".format(self.camera.get(cv2.CAP_PROP_FRAME_HEIGHT)))
 		# print("Capture FPS: {}".format(self.camera.get(cv2.CAP_PROP_FPS)))
-
-		self.camera.set(cv2.CAP_PROP_FPS, self.fps)
-		self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, self.capture_size[0])
-		self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.capture_size[1])
+		#
+		# self.camera.set(cv2.CAP_PROP_FPS, self.fps)
+		# self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, self.capture_size[0])
+		# self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.capture_size[1])
 
 	def isOpened(self):
 		return self.camera.isOpened()
