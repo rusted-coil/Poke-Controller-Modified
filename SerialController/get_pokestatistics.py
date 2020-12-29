@@ -39,6 +39,7 @@ class GetFromHomeGUI:
         self.treeview = ttk.Treeview(self.poke_window, columns=self.columns, show='headings', selectmode='browse')
         self.treeview_detail = ttk.Treeview(self.poke_window, columns=self.columns_d, show='headings',
                                             selectmode='browse')
+        self.treeview.bind("<<TreeviewSelect>>", self.getPokeDetail)
         self.vsb = ttk.Scrollbar(self.poke_window, orient="vertical", command=self.treeview.yview)
         self.hsb = ttk.Scrollbar(self.poke_window, orient="horizontal", command=self.treeview.xview)
         self.vsb_d = ttk.Scrollbar(self.poke_window, orient="vertical", command=self.treeview_detail.yview)
@@ -47,14 +48,16 @@ class GetFromHomeGUI:
         self.isSingle_l = ttk.Label(self.poke_window, text="バトルの種類")
         self.season = tk.StringVar(value=self.season_list[-1])
         self.isSingle = tk.StringVar(value=self.rule_list[0])
-        self.getRankPokeData_Button = ttk.Button(self.poke_window, text="取得", command=self.getRankPokeData)
-        self.getPokeDetail_Button = ttk.Button(self.poke_window, text="詳細取得", command=self.getPokeDetail)
+        # self.getRankPokeData_Button = ttk.Button(self.poke_window, text="取得", command=self.getRankPokeData)
+        # self.getPokeDetail_Button = ttk.Button(self.poke_window, text="詳細取得", command=self.getPokeDetail)
 
         self.season_cb = ttk.Combobox(self.poke_window, textvariable=self.season, values=self.season_list, width=30,
                                       state="readonly")
         self.season_cb.current(self.season_cb['values'].index(self.season.get()))
         self.isSingle_cb = ttk.Combobox(self.poke_window, textvariable=self.isSingle, values=self.rule_list, width=80,
                                         state="readonly")
+        self.season_cb.bind("<<ComboboxSelected>>", self.bindedGet)
+        self.isSingle_cb.bind("<<ComboboxSelected>>", self.bindedGet)
         self.isSingle_cb.current(self.isSingle_cb['values'].index(self.isSingle.get()))
 
         self.treeview.configure(yscrollcommand=self.vsb.set)
@@ -85,8 +88,8 @@ class GetFromHomeGUI:
         self.season_cb.grid(row=0, column=1, sticky='news')
         self.isSingle_l.grid(row=0, column=2, sticky='news')
         self.isSingle_cb.grid(row=0, column=3, sticky='news')
-        self.getRankPokeData_Button.grid(row=0, column=4, columnspan=2, sticky='news')
-        self.getPokeDetail_Button.grid(row=1, column=5, sticky='news')
+        # self.getRankPokeData_Button.grid(row=0, column=4, columnspan=2, sticky='news')
+        # self.getPokeDetail_Button.grid(row=1, column=5, sticky='news')
         self.treeview.grid(row=1, column=0, columnspan=4, sticky='news')
         self.treeview_detail.grid(row=3, column=0, columnspan=4, sticky='news')
         self.vsb.grid(row=1, column=4, sticky='nsw')
@@ -100,8 +103,9 @@ class GetFromHomeGUI:
         self.hsb_d.configure(command=self.treeview_detail.xview)
 
         self.setPokemons()
+        self.getRankPokeData()
 
-    def getPokeDetail(self):
+    def getPokeDetail(self, *event):
         self.delDetail()
         selected_items = self.treeview.selection()
         if not selected_items:
@@ -186,7 +190,11 @@ class GetFromHomeGUI:
                 self.ja_pokes["poke"][beatPokemon[i][0] - 1] if beatPokemon[i][0] != "" else ""
             ))
 
-    def getRankPokeData(self):
+    def bindedGet(self,*event):
+        self.getRankPokeData()
+        self.getPokeDetail()
+
+    def getRankPokeData(self, *event):
         if self.isSingle.get() == "シングル":
             isSingle = 1
         else:
@@ -276,8 +284,8 @@ class GetFromHomeGUI:
             seconds = seconds % 60
             print("最後にランクマッチデータをDLしたのは{0}時間{1}分{2}秒前".format(hours, minutes, seconds))
 
-        # ファイルが存在しないまたは最後のDLから45分経っているときは新しくダウンロードする
-        if not os.path.exists(path) or minutes >= 45:
+        # ファイルが存在しないまたは最後のDLから24時間経っているときは新しくダウンロードする
+        if not os.path.exists(path) or hours >= 24:
             try:
                 print("ランクマッチのデータをダウンロード中…", end="")
                 response = requests.post('https://api.battle.pokemon-home.com/cbd/competition/rankmatch/list',
