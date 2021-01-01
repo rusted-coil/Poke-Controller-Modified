@@ -16,6 +16,9 @@ class GuiSettings:
 		self.is_show_realtime = tk.BooleanVar(value=True)
 		self.is_show_serial = tk.BooleanVar(value=False)
 		self.is_use_keyboard = tk.BooleanVar(value=True)
+		# pokehome用の設定
+		self.season = tk.StringVar(value="1")
+		self.is_SingleBattle = tk.StringVar(value="シングル")
 
 	def load(self):
 		if os.path.isfile(self.SETTING_PATH):

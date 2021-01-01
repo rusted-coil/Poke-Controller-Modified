@@ -1,0 +1,686 @@
+<?xml version='1.0' encoding='utf-8'?>
+<interface version="1.0">
+  <object class="ttk.Frame" id="frame_1">
+    <property name="height">720</property>
+    <property name="padding">5</property>
+    <property name="relief">flat</property>
+    <property name="width">1280</property>
+    <layout manager="grid">
+      <property name="propagate">True</property>
+      <property id="0" name="uniform" type="row" />
+    </layout>
+    <child>
+      <object class="ttk.Labelframe" id="camera_lf">
+        <property name="height">200</property>
+        <property name="text" translatable="yes">Camera</property>
+        <property name="width">200</property>
+        <layout manager="grid">
+          <property name="columnspan">3</property>
+          <property name="padx">5</property>
+          <property name="propagate">True</property>
+          <property name="sticky">ew</property>
+        </layout>
+        <child>
+          <object class="ttk.Label" id="label_1">
+            <property name="anchor">center</property>
+            <property name="text" translatable="yes">Camera ID:</property>
+            <layout manager="grid">
+              <property name="padx">5</property>
+              <property name="propagate">True</property>
+              <property name="sticky">ew</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Entry" id="camera_entry">
+            <property name="state">normal</property>
+            <property name="textvariable">int:self.camera_id</property>
+            <layout manager="grid">
+              <property name="column">1</property>
+              <property name="padx">5</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">ew</property>
+              <property id="1" name="uniform" type="col">0</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="reloadButton">
+            <property name="command">openCamera</property>
+            <property name="text" translatable="yes">Reload Camera</property>
+            <layout manager="grid">
+              <property name="column">2</property>
+              <property name="padx">5</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">ew</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Separator" id="separator_1">
+            <property name="orient">vertical</property>
+            <layout manager="grid">
+              <property name="column">3</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">ns</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Checkbutton" id="cb1">
+            <property name="text" translatable="yes">Show Realtime</property>
+            <property name="variable">boolean:self.is_show_realtime</property>
+            <layout manager="grid">
+              <property name="column">4</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Separator" id="separator_2">
+            <property name="orient">vertical</property>
+            <layout manager="grid">
+              <property name="column">5</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">ns</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="captureButton">
+            <property name="command">saveCapture</property>
+            <property name="text" translatable="yes">Capture</property>
+            <layout manager="grid">
+              <property name="column">6</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Frame" id="camera_f2">
+            <layout manager="grid">
+              <property name="column">0</property>
+              <property name="columnspan">7</property>
+              <property name="propagate">True</property>
+              <property name="row">3</property>
+              <property name="sticky">nsew</property>
+            </layout>
+            <child>
+              <object class="ttk.Label" id="label3">
+                <property name="text" translatable="yes">FPS:</property>
+                <layout manager="grid">
+                  <property name="padx">5</property>
+                  <property name="propagate">True</property>
+                  <property name="sticky">ew</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Combobox" id="fps_cb">
+                <property name="justify">right</property>
+                <property name="state">readonly</property>
+                <property name="textvariable">string:self.fps</property>
+                <property name="values">60 45 30 15 5</property>
+                <property name="width">5</property>
+                <bind add="" handler="applyFps" sequence="&lt;&lt;ComboboxSelected&gt;&gt;" />
+                <layout manager="grid">
+                  <property name="column">1</property>
+                  <property name="padx">10</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                  <property name="sticky">ew</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Separator" id="separator_3">
+                <property name="orient">vertical</property>
+                <layout manager="grid">
+                  <property name="column">2</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                  <property name="sticky">ns</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Label" id="label_9">
+                <property name="text" translatable="yes">Show Size:</property>
+                <layout manager="grid">
+                  <property name="column">3</property>
+                  <property name="padx">5</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                  <property name="sticky">ew</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Combobox" id="show_size_cb">
+                <property name="textvariable">string:self.show_size</property>
+                <property name="values">640x360 1280x720</property>
+                <bind add="" handler="applyWindowSize" sequence="&lt;&lt;ComboboxSelected&gt;&gt;" />
+                <layout manager="grid">
+                  <property name="column">4</property>
+                  <property name="padx">10</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                  <property name="sticky">ew</property>
+                </layout>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Label" id="camera_name_l">
+            <property name="anchor">center</property>
+            <property name="text" translatable="yes">Camera Name: </property>
+            <layout manager="grid">
+              <property name="column">0</property>
+              <property name="padx">5</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+              <property name="sticky">ew</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Combobox" id="Camera_Name">
+            <property name="state">normal</property>
+            <property name="textvariable">string:self.camera_name_fromDLL</property>
+            <property name="values">No camera devices can be found.
+</property>
+            <bind add="" handler="set_cameraid" sequence="&lt;&lt;ComboboxSelected&gt;&gt;" />
+            <layout manager="grid">
+              <property name="column">1</property>
+              <property name="columnspan">6</property>
+              <property name="padx">5</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+              <property name="sticky">ew</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Frame" id="frame_1_2">
+            <property name="height">360</property>
+            <property name="relief">groove</property>
+            <property name="width">640</property>
+            <layout manager="grid">
+              <property name="column">0</property>
+              <property name="columnspan">7</property>
+              <property name="propagate">True</property>
+              <property name="row">2</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="ttk.Labelframe" id="serial_lf">
+        <property name="text" translatable="yes">Serial Settings</property>
+        <layout manager="grid">
+          <property name="column">0</property>
+          <property name="columnspan">2</property>
+          <property name="padx">5</property>
+          <property name="propagate">True</property>
+          <property name="row">1</property>
+          <property name="sticky">nsew</property>
+        </layout>
+        <child>
+          <object class="ttk.Label" id="label2">
+            <property name="text" translatable="yes">COM Port: </property>
+            <layout manager="grid">
+              <property name="padx">5</property>
+              <property name="propagate">True</property>
+              <property name="sticky">ew</property>
+              <property id="0" name="uniform" type="row" />
+              <property id="0" name="weight" type="row">0</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Entry" id="entry2">
+            <property name="textvariable">int:self.com_port</property>
+            <property name="width">5</property>
+            <layout manager="grid">
+              <property name="column">1</property>
+              <property name="padx">5</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">ew</property>
+              <property id="0" name="uniform" type="row" />
+              <property id="0" name="weight" type="row">0</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="reloadComPort">
+            <property name="command">activateSerial</property>
+            <property name="text" translatable="yes">Reload Port</property>
+            <layout manager="grid">
+              <property name="column">2</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property id="0" name="uniform" type="row" />
+              <property id="0" name="weight" type="row">0</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Separator" id="separator_4">
+            <property name="orient">vertical</property>
+            <layout manager="grid">
+              <property name="column">3</property>
+              <property name="padx">5</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">ns</property>
+              <property id="3" name="uniform" type="col" />
+              <property id="3" name="weight" type="col">0</property>
+              <property id="0" name="uniform" type="row" />
+              <property id="0" name="weight" type="row">0</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Checkbutton" id="checkbutton_2">
+            <property name="text" translatable="yes">Show Serial</property>
+            <property name="variable">boolean:self.is_show_serial</property>
+            <layout manager="grid">
+              <property name="column">4</property>
+              <property name="columnspan">2</property>
+              <property name="padx">5</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">ew</property>
+              <property id="0" name="uniform" type="row" />
+              <property id="0" name="weight" type="row">0</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="ttk.Labelframe" id="control_lf">
+        <property name="height">200</property>
+        <property name="text" translatable="yes">Controller</property>
+        <layout manager="grid">
+          <property name="column">0</property>
+          <property name="padx">5</property>
+          <property name="propagate">True</property>
+          <property name="row">2</property>
+          <property name="sticky">nsew</property>
+        </layout>
+        <child>
+          <object class="ttk.Checkbutton" id="cb_use_keyboard">
+            <property name="command">activateKeyboard</property>
+            <property name="text" translatable="yes">Use Keyboard</property>
+            <property name="variable">boolean:self.is_use_keyboard</property>
+            <layout manager="grid">
+              <property name="column">0</property>
+              <property name="padx">10</property>
+              <property name="pady">5</property>
+              <property name="propagate">True</property>
+              <property name="sticky">ew</property>
+              <property id="0" name="weight" type="col">1</property>
+              <property id="0" name="weight" type="row">1</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="simpleConButton">
+            <property name="command">createControllerWindow</property>
+            <property name="text" translatable="yes">Controller</property>
+            <layout manager="grid">
+              <property name="column">0</property>
+              <property name="padx">10</property>
+              <property name="pady">5</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+              <property name="sticky">ew</property>
+              <property id="0" name="weight" type="col">1</property>
+              <property id="1" name="weight" type="row">1</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="ttk.Labelframe" id="Poke_statistic_lf">
+        <property name="height">200</property>
+        <property name="text" translatable="yes">PokemonHome連携</property>
+        <property name="width">200</property>
+        <layout manager="grid">
+          <property name="column">1</property>
+          <property name="padx">5</property>
+          <property name="propagate">True</property>
+          <property name="row">2</property>
+          <property name="sticky">nsew</property>
+        </layout>
+        <child>
+          <object class="ttk.Button" id="OpenPokeButton">
+            <property name="command">createGetFromHomeWindow</property>
+            <property name="text" translatable="yes">技統計</property>
+            <layout manager="grid">
+              <property name="padx">10</property>
+              <property name="pady">10</property>
+              <property name="propagate">True</property>
+              <property name="sticky">nsew</property>
+              <property id="0" name="pad" type="col">0</property>
+              <property id="0" name="uniform" type="col">1</property>
+              <property id="0" name="weight" type="col">1</property>
+              <property id="0" name="pad" type="row">0</property>
+              <property id="0" name="uniform" type="row">1</property>
+              <property id="0" name="weight" type="row">1</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="ttk.Labelframe" id="lf">
+        <property name="height">200</property>
+        <property name="text" translatable="yes">Command</property>
+        <layout manager="grid">
+          <property name="column">2</property>
+          <property name="padx">5</property>
+          <property name="propagate">True</property>
+          <property name="row">1</property>
+          <property name="rowspan">2</property>
+          <property name="sticky">nsew</property>
+        </layout>
+        <child>
+          <object class="ttk.Notebook" id="Command_nb">
+            <layout manager="grid">
+              <property name="column">0</property>
+              <property name="columnspan">2</property>
+              <property name="padx">5</property>
+              <property name="pady">5</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">ew</property>
+            </layout>
+            <child>
+              <object class="ttk.Notebook.Tab" id="PyTab">
+                <property name="padding">5</property>
+                <property name="text" translatable="yes">Python Command</property>
+                <child>
+                  <object class="ttk.Combobox" id="py_cb">
+                    <property name="state">readonly</property>
+                    <property name="textvariable">string:self.py_name</property>
+                    <layout manager="pack">
+                      <property name="propagate">True</property>
+                      <property name="side">top</property>
+                    </layout>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Notebook.Tab" id="McuTab">
+                <property name="padding">5</property>
+                <property name="text" translatable="yes">Mcu Command</property>
+                <child>
+                  <object class="ttk.Combobox" id="mcu_cb">
+                    <property name="state">readonly</property>
+                    <property name="textvariable">string:self.mcu_name</property>
+                    <layout manager="pack">
+                      <property name="propagate">True</property>
+                      <property name="side">top</property>
+                    </layout>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="reloadCommandButton">
+            <property name="command">reloadCommands</property>
+            <property name="text" translatable="yes">Reload</property>
+            <layout manager="grid">
+              <property name="column">0</property>
+              <property name="padx">5</property>
+              <property name="pady">5</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+              <property name="sticky">ew</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="startButton">
+            <property name="command">startPlay</property>
+            <property name="text" translatable="yes">Start</property>
+            <layout manager="grid">
+              <property name="column">1</property>
+              <property name="padx">5</property>
+              <property name="pady">5</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+              <property name="sticky">ew</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="pygubu.builder.widgets.scrollbarhelper" id="log_scroll">
+        <property name="borderwidth">1</property>
+        <property name="padding">1</property>
+        <property name="relief">sunken</property>
+        <property name="scrolltype">both</property>
+        <property name="usemousewheel">false</property>
+        <layout manager="grid">
+          <property name="column">3</property>
+          <property name="padx">5</property>
+          <property name="pady">5</property>
+          <property name="propagate">True</property>
+          <property name="row">0</property>
+          <property name="rowspan">3</property>
+          <property name="sticky">ns</property>
+        </layout>
+        <child>
+          <object class="tk.Text" id="logArea">
+            <property name="blockcursor">true</property>
+            <property name="height">10</property>
+            <property name="insertunfocussed">none</property>
+            <property name="maxundo">0</property>
+            <property name="relief">flat</property>
+            <property name="state">disabled</property>
+            <property name="undo">false</property>
+            <property name="width">50</property>
+            <layout manager="pack">
+              <property name="propagate">True</property>
+              <property name="side">top</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="tk.Toplevel" id="toplevel_1">
+    <property name="height">200</property>
+    <property name="width">200</property>
+    <child>
+      <object class="ttk.Frame" id="frame_9">
+        <property name="height">550</property>
+        <property name="width">900</property>
+        <layout manager="pack">
+          <property name="propagate">False</property>
+          <property name="side">top</property>
+        </layout>
+        <child>
+          <object class="ttk.Labelframe" id="labelframe_2">
+            <property name="height">200</property>
+            <property name="text" translatable="yes">ランクシーズン・バトル種選択</property>
+            <property name="width">200</property>
+            <layout manager="pack">
+              <property name="fill">both</property>
+              <property name="propagate">True</property>
+              <property name="side">top</property>
+            </layout>
+            <child>
+              <object class="ttk.Label" id="Season">
+                <property name="text" translatable="yes">Season</property>
+                <layout manager="pack">
+                  <property name="padx">5</property>
+                  <property name="propagate">True</property>
+                  <property name="side">left</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Combobox" id="combobox_3">
+                <layout manager="pack">
+                  <property name="padx">5</property>
+                  <property name="propagate">True</property>
+                  <property name="side">left</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Label" id="label_4">
+                <property name="text" translatable="yes">バトルの種類</property>
+                <layout manager="pack">
+                  <property name="padx">5</property>
+                  <property name="propagate">True</property>
+                  <property name="side">left</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Combobox" id="combobox_4">
+                <layout manager="pack">
+                  <property name="padx">5</property>
+                  <property name="propagate">True</property>
+                  <property name="side">left</property>
+                </layout>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Labelframe" id="labelframe_5">
+            <property name="height">200</property>
+            <property name="text" translatable="yes">ポケモン選択</property>
+            <property name="width">200</property>
+            <layout manager="pack">
+              <property name="fill">both</property>
+              <property name="propagate">True</property>
+              <property name="side">top</property>
+            </layout>
+            <child>
+              <object class="pygubu.builder.widgets.scrollbarhelper" id="scrollbarhelper_1">
+                <property name="scrolltype">both</property>
+                <property name="usemousewheel">false</property>
+                <layout manager="grid">
+                  <property name="padx">5</property>
+                  <property name="pady">5</property>
+                  <property name="propagate">True</property>
+                  <property name="sticky">ew</property>
+                  <property id="0" name="uniform" type="col">1</property>
+                  <property id="0" name="weight" type="col">1</property>
+                  <property id="0" name="uniform" type="row">1</property>
+                  <property id="0" name="weight" type="row">1</property>
+                </layout>
+                <child>
+                  <object class="ttk.Treeview" id="treeview_3">
+                    <property name="selectmode">browse</property>
+                    <layout manager="grid">
+                      <property name="padx">5</property>
+                      <property name="propagate">True</property>
+                      <property name="sticky">ew</property>
+                      <property id="0" name="weight" type="col">1</property>
+                      <property id="0" name="weight" type="row">1</property>
+                    </layout>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Labelframe" id="labelframe_6">
+            <property name="height">200</property>
+            <property name="text" translatable="yes">各種値</property>
+            <property name="width">200</property>
+            <layout manager="pack">
+              <property name="expand">false</property>
+              <property name="fill">x</property>
+              <property name="propagate">True</property>
+              <property name="side">top</property>
+            </layout>
+            <child>
+              <object class="ttk.Notebook" id="notebook_1">
+                <property name="height">200</property>
+                <property name="width">200</property>
+                <layout manager="grid">
+                  <property name="padx">5</property>
+                  <property name="pady">5</property>
+                  <property name="propagate">True</property>
+                  <property name="sticky">ew</property>
+                  <property id="0" name="uniform" type="col" />
+                  <property id="0" name="weight" type="col">1</property>
+                  <property id="0" name="uniform" type="row" />
+                  <property id="0" name="weight" type="row">1</property>
+                </layout>
+                <child>
+                  <object class="ttk.Notebook.Tab" id="tab_3">
+                    <property name="sticky">ew</property>
+                    <property name="text" translatable="yes">tab_3</property>
+                    <child>
+                      <object class="pygubu.builder.widgets.scrollbarhelper" id="scrollbarhelper_2">
+                        <property name="scrolltype">both</property>
+                        <property name="usemousewheel">false</property>
+                        <layout manager="pack">
+                          <property name="propagate">True</property>
+                          <property name="side">top</property>
+                        </layout>
+                        <child>
+                          <object class="ttk.Treeview" id="treeview_16">
+                            <property name="selectmode">extended</property>
+                            <layout manager="grid">
+                              <property name="padx">5</property>
+                              <property name="propagate">True</property>
+                              <property name="sticky">ew</property>
+                              <property id="0" name="weight" type="col">1</property>
+                              <property id="0" name="weight" type="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="ttk.Notebook.Tab" id="tab_4">
+                    <property name="text" translatable="yes">tab_4</property>
+                    <child>
+                      <object class="ttk.Treeview" id="treeview_5">
+                        <property name="selectmode">extended</property>
+                        <layout manager="grid">
+                          <property name="padx">5</property>
+                          <property name="propagate">True</property>
+                          <property id="0" name="weight" type="col">1</property>
+                          <property id="0" name="weight" type="row">1</property>
+                        </layout>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
