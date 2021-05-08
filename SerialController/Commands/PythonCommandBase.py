@@ -5,6 +5,7 @@ import cv2
 import threading
 from abc import abstractclassmethod
 from time import sleep
+import numpy as np
 
 from LineNotify import Line_Notify
 from . import CommandBase
@@ -70,10 +71,10 @@ class PythonCommand(CommandBase.Command):
         self.end(self.keys.ser)
 
     # press button at duration times(s)
-    def press(self, buttons, duration=0.1, wait=0.1):
-        self.keys.input(buttons)
+    def press(self, buttons, duration=0.1, wait=0.1, ifPrint=True):
+        self.keys.input(buttons, ifPrint=ifPrint)
         self.wait(duration)
-        self.keys.inputEnd(buttons)
+        self.keys.inputEnd(buttons, ifPrint=ifPrint)
         self.wait(wait)
         self.checkIfAlive()
 
@@ -180,8 +181,12 @@ class ImageProcPythonCommand(PythonCommand):
     # It's recommended that you use gray_scale option unless the template color wouldn't be cared for performace
     # 現在のスクリーンショットと指定した画像のテンプレートマッチングを行います
     # 色の違いを考慮しないのであればパフォーマンスの点からuse_grayをTrueにしてグレースケール画像を使うことを推奨します
-    def isContainTemplate(self, template_path, threshold=0.7, use_gray=True, show_value=False):
-        src = self.camera.readFrame()
+    def isContainTemplate(self, template_path, threshold=0.7, use_gray=True, show_value=False,
+                          img=None, ret="bool", single_match=True):
+        if img is None:
+            src = self.camera.readFrame()
+        else:
+            src = img
         src = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY) if use_gray else src
 
         template = cv2.imread(TEMPLATE_PATH + template_path, cv2.IMREAD_GRAYSCALE if use_gray else cv2.IMREAD_COLOR)
@@ -189,21 +194,43 @@ class ImageProcPythonCommand(PythonCommand):
 
         method = cv2.TM_CCOEFF_NORMED
         res = cv2.matchTemplate(src, template, method)
-        _, max_val, _, max_loc = cv2.minMaxLoc(res)
+        if single_match:
+            _, max_val, _, max_loc = cv2.minMaxLoc(res)
 
-        if show_value:
-            print(template_path + ' ZNCC value: ' + str(max_val))
+            if show_value:
+                print(template_path + ' ZNCC value: ' + str(max_val))
 
-        if max_val >= threshold:
-            # if use_gray:
-            # 	src = cv2.cvtColor(src, cv2.COLOR_GRAY2BGR)
-            #
-            # top_left = max_loc
-            # bottom_right = (top_left[0] + w, top_left[1] + h)
-            # cv2.rectangle(src, top_left, bottom_right, (255, 0, 255), 2)
-            return True
+            if max_val >= threshold:
+                # if use_gray:
+                # 	src = cv2.cvtColor(src, cv2.COLOR_GRAY2BGR)
+                #
+                # top_left = max_loc
+                # bottom_right = (top_left[0] + w, top_left[1] + h)
+                # cv2.rectangle(src, top_left, bottom_right, (255, 0, 255), 2)
+                if ret == "bool":
+                    return True
+                elif ret == "match":
+                    return True, max_val
+            else:
+                if ret == "bool":
+                    return False
+                elif ret == "match":
+                    return False, max_val
         else:
-            return False
+            wh = [w, h]
+            loc = np.where(res >= threshold)
+            _res = np.where(res >= threshold, res, 0)
+
+            if np.amax(res) > threshold:
+                if ret == "bool":
+                    return True
+                elif ret == "match":
+                    return True, loc, wh, res
+            else:
+                if ret == "bool":
+                    return False
+                elif ret == "match":
+                    return False, loc, wh, res
 
     try:
         def isContainTemplateGPU(self, template_path, threshold=0.7, use_gray=True, show_value=False):
