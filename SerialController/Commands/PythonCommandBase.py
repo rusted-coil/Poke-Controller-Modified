@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import cv2
+import os
 import threading
 from abc import abstractclassmethod
 from time import sleep
@@ -14,6 +15,7 @@ from . import CommandBase
 from .Keys import Button, Direction, KeyPress
 
 import numpy as np
+
 
 # the class For notifying stop signal is sent from Main window
 class StopThread(Exception):
@@ -189,7 +191,7 @@ class PythonCommand(CommandBase.Command):
         self.Line.send_text(txt, token)
 
 
-TEMPLATE_PATH = "./Template/"
+TEMPLATE_PATH = f".{os.sep}Template{os.sep}"
 
 
 class ImageProcPythonCommand(PythonCommand):
@@ -220,6 +222,7 @@ class ImageProcPythonCommand(PythonCommand):
         src = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY) if use_gray else src
 
         template = cv2.imread(TEMPLATE_PATH + template_path, cv2.IMREAD_GRAYSCALE if use_gray else cv2.IMREAD_COLOR)
+
         w, h = template.shape[1], template.shape[0]
 
         method = cv2.TM_CCOEFF_NORMED
@@ -279,18 +282,18 @@ class ImageProcPythonCommand(PythonCommand):
                 if self.gui is not None and show_position:
                     # self.gui.delete("ImageRecRect")
                     self.gui.ImgRect(*top_left,
-                                    *bottom_right,
-                                    outline='blue',
-                                    tag=tag,
-                                    ms=ms)
+                                     *bottom_right,
+                                     outline='blue',
+                                     tag=tag,
+                                     ms=ms)
             else:
                 if self.gui is not None and show_position and not show_only_true_rect:
                     # self.gui.delete("ImageRecRect")
                     self.gui.ImgRect(*top_left,
-                                    *bottom_right,
-                                    outline='red',
-                                    tag=tag,
-                                    ms=ms)
+                                     *bottom_right,
+                                     outline='red',
+                                     tag=tag,
+                                     ms=ms)
 
         return np.argmax(max_val_list), max_val_list, judge_threshold_list
 
