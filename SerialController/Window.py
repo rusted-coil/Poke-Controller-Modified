@@ -387,9 +387,9 @@ class PokeControllerApp:
 
     def OpenCommandDir(self):
         if self.Command_nb.index("current") == 0:
-            directory = os.path.join("Commands", "PythonCommands")
+            directory = os.path.join("Commands", "MyPythonCommands")
         else:
-            directory = os.path.join("Commands", "McuCommands")
+            directory = os.path.join("Commands", "MyMcuCommands")
         self._logger.debug(f'Open folder: \'{directory}\'')
         if platform.system() == 'Windows':
             subprocess.call(f'explorer "{directory}"')
@@ -496,9 +496,9 @@ class PokeControllerApp:
     #     self.poke_treeview = window2
 
     def loadCommands(self):
-        self.py_loader = CommandLoader(util.ospath('Commands/PythonCommands'),
+        self.py_loader = CommandLoader(util.ospath('Commands/MyPythonCommands'),
                                        PythonCommandBase.PythonCommand)  # コマンドの読み込み
-        self.mcu_loader = CommandLoader(util.ospath('Commands/McuCommands'), McuCommandBase.McuCommand)
+        self.mcu_loader = CommandLoader(util.ospath('Commands/MyMcuCommands'), McuCommandBase.McuCommand)
         self.py_classes = self.py_loader.load()
         self.mcu_classes = self.mcu_loader.load()
         self.setCommandItems()
