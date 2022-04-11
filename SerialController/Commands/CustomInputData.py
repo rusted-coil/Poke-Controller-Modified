@@ -4,8 +4,12 @@
 import datetime
 
 class CustomInputData:
-    def SetDate(self, year, month, day):
+    SetDateCallback = None
+
+    # Dateに日付をセットします。
+    def SetDate(self, year, month, day, isCallback):
         self.Date = datetime.date(year, month, day)
-    pass
+        if isCallback and self.SetDateCallback != None:
+            self.SetDateCallback()
 
 g_CustomInputData = CustomInputData()

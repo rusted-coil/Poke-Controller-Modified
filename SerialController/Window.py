@@ -260,14 +260,7 @@ class PokeControllerApp:
         self.CustomInputBoxDay = ttk.Combobox(self.CustomInputDayRow, width=4, values=self.DayList)
         self.CustomInputBoxDay.pack(side = tk.LEFT)
         self.CustomInputButtonToday = ttk.Button(self.CustomInputDayRow)
-        self.CustomInputButtonToday.config(text='今日の日付', \
-            command=lambda: [\
-                self.CustomInputBoxYear.delete(0, tk.END),\
-                self.CustomInputBoxYear.insert(tk.END, datetime.date.today().year),\
-                self.CustomInputBoxMonth.delete(0, tk.END),\
-                self.CustomInputBoxMonth.insert(tk.END, datetime.date.today().month),\
-                self.CustomInputBoxDay.delete(0, tk.END),\
-                self.CustomInputBoxDay.insert(tk.END, datetime.date.today().day)])
+        self.CustomInputButtonToday.config(text='今日の日付', command=lambda: self.SetDateToCustomInputField(datetime.date.today()))
         self.CustomInputButtonToday.pack(side = tk.LEFT, padx='10')
         self.CustomInputDayRow.pack(anchor = tk.W, padx='5', pady = '5')
         ## カウンタ1
@@ -303,6 +296,9 @@ class PokeControllerApp:
 
         # 仮置フレームを削除
         self.frame_1_2.destroy()
+
+        # CustomInput初期化
+        g_CustomInputData.SetDateCallback = self.CustomInputSetDateCallback
 
         # 標準出力をログにリダイレクト
         sys.stdout = StdoutRedirector(self.logArea)
@@ -603,7 +599,7 @@ class PokeControllerApp:
 
     def startPlay(self, *event):
         # CustomInput読み込み
-        g_CustomInputData.SetDate(self.CustomInputBoxYear.getint(2000), self.CustomInputBoxMonth.getint(1), self.CustomInputBoxDay.getint(1))
+        g_CustomInputData.SetDate(int(self.CustomInputBoxYear.get()), int(self.CustomInputBoxMonth.get()), int(self.CustomInputBoxDay.get()), False)
         g_CustomInputData.Counter1 = self.CustomInputEntryCounter1.getint(0)
 
         if self.cur_command is None:
@@ -692,6 +688,16 @@ class PokeControllerApp:
         if self.startButton["text"] == "Stop":
             self.stopPlay()
 
+    def SetDateToCustomInputField(self, date):
+        self.CustomInputBoxYear.delete(0, tk.END)
+        self.CustomInputBoxYear.insert(tk.END, date.year)
+        self.CustomInputBoxMonth.delete(0, tk.END)
+        self.CustomInputBoxMonth.insert(tk.END, date.month)
+        self.CustomInputBoxDay.delete(0, tk.END)
+        self.CustomInputBoxDay.insert(tk.END, date.day)
+
+    def CustomInputSetDateCallback(self):
+        self.SetDateToCustomInputField(g_CustomInputData.Date)
 
 class StdoutRedirector(object):
     """

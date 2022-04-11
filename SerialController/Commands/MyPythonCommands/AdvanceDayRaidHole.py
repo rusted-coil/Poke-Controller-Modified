@@ -6,6 +6,8 @@ from Commands.PythonCommandBase import PythonCommand
 
 from Commands.CustomInputData import g_CustomInputData
 
+from .Util.DayChanger import DayChanger
+
 class AdvanceDayRaidHole(PythonCommand):
     NAME = '1日進める(RaidHole)'
 
@@ -13,5 +15,7 @@ class AdvanceDayRaidHole(PythonCommand):
         super().__init__()
 
     def do(self):
-        print(g_CustomInputData.Counter1)
-        print(g_CustomInputData.Date)
+        dayChanger = DayChanger(g_CustomInputData.Date)
+        dayChanger.CursorLeftToRight(self)
+        dayChanger.AdvanceDay(self)
+        g_CustomInputData.SetDate(dayChanger.CurrentDate.year, dayChanger.CurrentDate.month, dayChanger.CurrentDate.day, True)
