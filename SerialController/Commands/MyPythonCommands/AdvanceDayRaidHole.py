@@ -13,4 +13,5 @@ class AdvanceDayRaidHole(PythonCommand):
         super().__init__()
 
     def do(self):
-        print(g_CustomInputData.test)
+        print(g_CustomInputData.Counter1)
+        print(g_CustomInputData.Date)

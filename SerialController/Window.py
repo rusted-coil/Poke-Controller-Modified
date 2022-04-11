@@ -37,6 +37,7 @@ Todo:
 '''
 
 # CustomInput対応
+import datetime
 from Commands.CustomInputData import g_CustomInputData
 
 class PokeControllerApp:
@@ -259,7 +260,14 @@ class PokeControllerApp:
         self.CustomInputBoxDay = ttk.Combobox(self.CustomInputDayRow, width=4, values=self.DayList)
         self.CustomInputBoxDay.pack(side = tk.LEFT)
         self.CustomInputButtonToday = ttk.Button(self.CustomInputDayRow)
-        self.CustomInputButtonToday.config(text='今日の日付')
+        self.CustomInputButtonToday.config(text='今日の日付', \
+            command=lambda: [\
+                self.CustomInputBoxYear.delete(0, tk.END),\
+                self.CustomInputBoxYear.insert(tk.END, datetime.date.today().year),\
+                self.CustomInputBoxMonth.delete(0, tk.END),\
+                self.CustomInputBoxMonth.insert(tk.END, datetime.date.today().month),\
+                self.CustomInputBoxDay.delete(0, tk.END),\
+                self.CustomInputBoxDay.insert(tk.END, datetime.date.today().day)])
         self.CustomInputButtonToday.pack(side = tk.LEFT, padx='10')
         self.CustomInputDayRow.pack(anchor = tk.W, padx='5', pady = '5')
         ## カウンタ1
@@ -595,7 +603,8 @@ class PokeControllerApp:
 
     def startPlay(self, *event):
         # CustomInput読み込み
-        g_CustomInputData.test = self.CustomInputEntryCounter1.get()
+        g_CustomInputData.SetDate(self.CustomInputBoxYear.getint(2000), self.CustomInputBoxMonth.getint(1), self.CustomInputBoxDay.getint(1))
+        g_CustomInputData.Counter1 = self.CustomInputEntryCounter1.getint(0)
 
         if self.cur_command is None:
             print('No commands have been assigned yet.')
