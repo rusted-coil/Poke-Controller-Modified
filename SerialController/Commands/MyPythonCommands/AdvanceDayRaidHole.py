@@ -4,16 +4,13 @@
 from Commands.Keys import Button
 from Commands.PythonCommandBase import PythonCommand
 
-#import AdvanceDays
+from Commands.CustomInputData import g_CustomInputData
 
-# Mash a button A
-# A連打
-class Mash_A(PythonCommand):
-    NAME = 'テスト1'
+class AdvanceDayRaidHole(PythonCommand):
+    NAME = '1日進める(RaidHole)'
 
     def __init__(self):
         super().__init__()
 
     def do(self):
-        self.press(Button.X, 0.1, 1.0)
-        self.press(Button.B, 0.1, 1.0)
+        print(g_CustomInputData.test)

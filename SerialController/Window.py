@@ -36,6 +36,8 @@ Todo:
 ・画像認識の時の枠を設定でON/OFFできると嬉しい
 '''
 
+# CustomInput対応
+from Commands.CustomInputData import g_CustomInputData
 
 class PokeControllerApp:
     def __init__(self, master=None):
@@ -231,10 +233,50 @@ class PokeControllerApp:
         self.startButton.grid(column='1', padx='5', pady='5', row='1', sticky='ew')
         self.startButton.configure(command=self.startPlay)
 
+        # 自作Input置き場
+        self.CustomInputFrame = ttk.Labelframe(self.frame_1)
+        ## 日付
+        self.CustomInputDayRow = ttk.Frame(self.CustomInputFrame)
+        self.CustomInputLabel1 = ttk.Label(self.CustomInputDayRow)
+        self.CustomInputLabel1.config(text='日付:')
+        self.CustomInputLabel1.pack(side = tk.LEFT)
+        self.CustomInputLabelYear = ttk.Label(self.CustomInputDayRow)
+        self.CustomInputLabelYear.config(text='Year')
+        self.CustomInputLabelYear.pack(side = tk.LEFT)
+        self.YearList = ('2000', '2001')
+        self.CustomInputBoxYear = ttk.Combobox(self.CustomInputDayRow, width=6, values=self.YearList)
+        self.CustomInputBoxYear.pack(side = tk.LEFT)
+        self.CustomInputLabelMonth = ttk.Label(self.CustomInputDayRow)
+        self.CustomInputLabelMonth.config(text='Month')
+        self.CustomInputLabelMonth.pack(side = tk.LEFT)
+        self.MonthList = ('1', '2')
+        self.CustomInputBoxMonth = ttk.Combobox(self.CustomInputDayRow, width=4, values=self.MonthList)
+        self.CustomInputBoxMonth.pack(side = tk.LEFT)
+        self.CustomInputLabelDay = ttk.Label(self.CustomInputDayRow)
+        self.CustomInputLabelDay.config(text='Day')
+        self.CustomInputLabelDay.pack(side = tk.LEFT)
+        self.DayList = ('1', '2')
+        self.CustomInputBoxDay = ttk.Combobox(self.CustomInputDayRow, width=4, values=self.DayList)
+        self.CustomInputBoxDay.pack(side = tk.LEFT)
+        self.CustomInputButtonToday = ttk.Button(self.CustomInputDayRow)
+        self.CustomInputButtonToday.config(text='今日の日付')
+        self.CustomInputButtonToday.pack(side = tk.LEFT, padx='10')
+        self.CustomInputDayRow.pack(anchor = tk.W, padx='5', pady = '5')
+        ## カウンタ1
+        self.CustomInputCounter1Row = ttk.Frame(self.CustomInputFrame)
+        self.CustomInputLabel2 = ttk.Label(self.CustomInputCounter1Row)
+        self.CustomInputLabel2.config(text='カウンター1：')
+        self.CustomInputLabel2.pack(side = tk.LEFT)
+        self.CustomInputEntryCounter1 = ttk.Entry(self.CustomInputCounter1Row)
+        self.CustomInputEntryCounter1.pack(side = tk.LEFT)
+        self.CustomInputCounter1Row.pack(anchor = tk.W, padx='5', pady = '5')
+
         self.Commands_f.pack(fill="both", expand=True, padx='5', pady='5', anchor=tk.E, side='top')
         self.Commands_2_f.pack(fill=None, expand=True, padx='5', pady='5', anchor=tk.E, side='top')
         self.lf.config(height='200', text='Command')
         self.lf.grid(column='2', padx='5', row='1', rowspan='2', sticky='nsew')
+        self.CustomInputFrame.config(height='200', text='Custom Input')
+        self.CustomInputFrame.grid(column='0', columnspan='3', padx='5', row='3', sticky='nsew')
         self.log_scroll = ScrollbarHelper(self.frame_1, scrolltype='both')
         self.logArea = tk.Text(self.log_scroll.container)
         self.logArea.config(blockcursor='true', height='10', insertunfocussed='none', maxundo='0')
@@ -243,7 +285,7 @@ class PokeControllerApp:
         self.log_scroll.add_child(self.logArea)
         self.log_scroll.config(borderwidth='1', padding='1', relief='sunken')
         # TODO - self.log_scroll: code for custom option 'usemousewheel' not implemented.
-        self.log_scroll.grid(column='3', padx='5', pady='5', row='0', rowspan='3', sticky='nsew')
+        self.log_scroll.grid(column='3', padx='5', pady='5', row='0', rowspan='4', sticky='nsew')
         self.frame_1.config(height='720', padding='5', relief='flat', width='1280')
         self.frame_1.pack(expand='true', fill='both', side='top')
         self.frame_1.columnconfigure('3', weight='1')
@@ -552,6 +594,9 @@ class PokeControllerApp:
         self._logger.info("Reloaded commands.")
 
     def startPlay(self, *event):
+        # CustomInput読み込み
+        g_CustomInputData.test = self.CustomInputEntryCounter1.get()
+
         if self.cur_command is None:
             print('No commands have been assigned yet.')
             self._logger.info('No commands have been assigned yet.')
