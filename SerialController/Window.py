@@ -647,9 +647,6 @@ class PokeControllerApp:
         if self.startButton["text"] == "Stop":
             self.stopPlay()
 
-#    def CustomInputSetDateCallback(self):
-#        self.SetDateToCustomInputField(g_CustomInputData.Date)
-
 class StdoutRedirector(object):
     """
     標準出力をtextウィジェットにリダイレクトするクラス
