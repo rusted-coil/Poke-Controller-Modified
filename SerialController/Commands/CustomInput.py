@@ -32,24 +32,27 @@ class CustomInputView:
         self.YearLabel.config(text='Year')
         self.YearLabel.pack(side = tk.LEFT)
 
-        self.YearList = ('2000', '2001')
+        self.YearList = list(range(2000, 2100))
         self.YearBox = ttk.Combobox(self.DateRow, width=6, values=self.YearList)
+        self.YearBox.set(2000)
         self.YearBox.pack(side = tk.LEFT)
 
         self.MonthLabel = ttk.Label(self.DateRow)
         self.MonthLabel.config(text='Month')
         self.MonthLabel.pack(side = tk.LEFT)
 
-        self.MonthList = ('1', '2')
+        self.MonthList = list(range(1, 13))
         self.MonthBox = ttk.Combobox(self.DateRow, width=4, values=self.MonthList)
+        self.MonthBox.set(1)
         self.MonthBox.pack(side = tk.LEFT)
 
         self.DayLabel = ttk.Label(self.DateRow)
         self.DayLabel.config(text='Day')
         self.DayLabel.pack(side = tk.LEFT)
 
-        self.DayList = ('1', '2')
+        self.DayList = list(range(1, 32))
         self.DayBox = ttk.Combobox(self.DateRow, width=4, values=self.DayList)
+        self.DayBox.set(1)
         self.DayBox.pack(side = tk.LEFT)
 
         self.TodayButton = ttk.Button(self.DateRow)
