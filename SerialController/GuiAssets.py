@@ -16,6 +16,8 @@ from Commands import UnitCommand
 from Commands import StickCommand
 from Commands.Keys import Direction, Stick, Button, Direction, KeyPress
 
+from Commands import MultiCommand
+
 import logging
 from logging import INFO, StreamHandler, getLogger, DEBUG, NullHandler
 from Commands.PythonCommandBase import PythonCommand, StopThread
@@ -569,6 +571,9 @@ class ControllerGUI:
         tk.Button(joycon_R_frame, text='PLUS', width=5, command=lambda: UnitCommand.PLUS().start(ser)).place(x=35, y=70)
         tk.Button(joycon_R_frame, text='HOME', width=5, command=lambda: UnitCommand.HOME().start(ser)).place(x=50,
                                                                                                              y=270)
+
+        # 特殊コマンド
+        tk.Button(joycon_R_frame, text="LoadBackup", width=10, command=lambda: MultiCommand.LoadBackupSwSh().start(ser)).place(x=190, y=270)
 
         joycon_L_frame.grid(row=0, column=0)
         joycon_R_frame.grid(row=0, column=1)
