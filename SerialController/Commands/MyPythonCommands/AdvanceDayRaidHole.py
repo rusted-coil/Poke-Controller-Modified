@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from Commands.Keys import Button, Direction
+from Commands.Keys import Button, Hat
 from Commands.PythonCommandBase import PythonCommand
 
 from Commands.CustomInput import g_CustomInput
@@ -18,24 +18,24 @@ class AdvanceDayRaidHole:
 
         # HOME画面に戻り設定をクリック
         cmd.press(Button.HOME, 0.05, 1.0)
-        cmd.press(Direction.DOWN, 0.05, 0.05)
+        cmd.press(Hat.BTM, 0.05, 0.05)
         for i in range(5): # HOMEメニューの項目が増えたら変更する
-            cmd.press(Direction.RIGHT, 0.05, 0.05)
+            cmd.press(Hat.RIGHT, 0.05, 0.05)
 
         # 設定画面で本体の設定へ
         cmd.press(Button.A, 0.05, 0.05)
-        cmd.press(Direction.DOWN, 2.2, 0.05)
+        cmd.press(Hat.BTM, 2.2, 0.05)
         cmd.press(Button.A, 0.05, 0.05)
 
         # 本体の設定で時刻変更へ
         for i in range(3):
-            cmd.press(Direction.DOWN, 0.05, 0.05)
-        cmd.press(Direction.DOWN, 0.3, 0.05)
+            cmd.press(Hat.BTM, 0.05, 0.05)
+        cmd.press(Hat.BTM, 0.3, 0.05)
         for i in range(2):
-            cmd.press(Direction.DOWN, 0.05, 0.05)
+            cmd.press(Hat.BTM, 0.05, 0.05)
         cmd.press(Button.A, 0.05, 0.3)
-        cmd.press(Direction.DOWN, 0.05, 0.05)
-        cmd.press(Direction.DOWN, 0.05, 0.05)
+        cmd.press(Hat.BTM, 0.05, 0.05)
+        cmd.press(Hat.BTM, 0.05, 0.05)
 
         # 設定画面で+1日
         dayChanger = DayChanger(g_CustomInput.Model.Date)

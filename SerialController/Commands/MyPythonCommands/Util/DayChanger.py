@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from datetime import datetime, timedelta
-from Commands.Keys import Button, Direction
+from datetime import timedelta
+from Commands.Keys import Button, Hat
 
 class DayChanger:
     def __init__(self, date):
@@ -12,7 +12,7 @@ class DayChanger:
     # 日時変更メニューのカーソルを左端から右端に設定します。
     def CursorLeftToRight(self, cmd):
         cmd.press(Button.A, 0.05, 0.3)
-        cmd.press(Direction.RIGHT, 2.0, 0.05)
+        cmd.press(Hat.RIGHT, 2.0, 0.05)
         cmd.press(Button.A, 0.05, 0.3)
         self.IsFromRight = True
 
@@ -28,17 +28,17 @@ class DayChanger:
         cmd.press(Button.A, 0.05, 0.3) # 日時変更画面へ
 
         if self.IsFromRight:
-            cmd.press(Direction.LEFT, 0.05, 0.05)
-            cmd.press(Direction.LEFT, 0.05, 0.05)
-            cmd.press(Direction.LEFT, 0.05, 0.05)
+            cmd.press(Hat.LEFT, 0.05, 0.05)
+            cmd.press(Hat.LEFT, 0.05, 0.05)
+            cmd.press(Hat.LEFT, 0.05, 0.05)
         else:
-            cmd.press(Direction.RIGHT, 0.05, 0.05)
-            cmd.press(Direction.RIGHT, 0.05, 0.05)
+            cmd.press(Hat.RIGHT, 0.05, 0.05)
+            cmd.press(Hat.RIGHT, 0.05, 0.05)
 
         for i in range(updateCount): # Day, Month, Yearを1加算
-            cmd.press(Direction.UP, 0.05, 0.05)
+            cmd.press(Hat.TOP, 0.05, 0.05)
             if i != updateCount - 1:
-                cmd.press(Direction.LEFT, 0.05, 0.05)
+                cmd.press(Hat.LEFT, 0.05, 0.05)
         
         for i in range(updateCount + 3): # 完了
             cmd.press(Button.A, 0.05, 0.05)
