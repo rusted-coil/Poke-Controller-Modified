@@ -37,8 +37,7 @@ Todo:
 '''
 
 # CustomInput対応
-import datetime
-from Commands.CustomInputData import g_CustomInputData
+from Commands.CustomInput import g_CustomInput
 
 class PokeControllerApp:
     def __init__(self, master=None):
@@ -234,49 +233,13 @@ class PokeControllerApp:
         self.startButton.grid(column='1', padx='5', pady='5', row='1', sticky='ew')
         self.startButton.configure(command=self.startPlay)
 
-        # 自作Input置き場
-        self.CustomInputFrame = ttk.Labelframe(self.frame_1)
-        ## 日付
-        self.CustomInputDayRow = ttk.Frame(self.CustomInputFrame)
-        self.CustomInputLabel1 = ttk.Label(self.CustomInputDayRow)
-        self.CustomInputLabel1.config(text='日付:')
-        self.CustomInputLabel1.pack(side = tk.LEFT)
-        self.CustomInputLabelYear = ttk.Label(self.CustomInputDayRow)
-        self.CustomInputLabelYear.config(text='Year')
-        self.CustomInputLabelYear.pack(side = tk.LEFT)
-        self.YearList = ('2000', '2001')
-        self.CustomInputBoxYear = ttk.Combobox(self.CustomInputDayRow, width=6, values=self.YearList)
-        self.CustomInputBoxYear.pack(side = tk.LEFT)
-        self.CustomInputLabelMonth = ttk.Label(self.CustomInputDayRow)
-        self.CustomInputLabelMonth.config(text='Month')
-        self.CustomInputLabelMonth.pack(side = tk.LEFT)
-        self.MonthList = ('1', '2')
-        self.CustomInputBoxMonth = ttk.Combobox(self.CustomInputDayRow, width=4, values=self.MonthList)
-        self.CustomInputBoxMonth.pack(side = tk.LEFT)
-        self.CustomInputLabelDay = ttk.Label(self.CustomInputDayRow)
-        self.CustomInputLabelDay.config(text='Day')
-        self.CustomInputLabelDay.pack(side = tk.LEFT)
-        self.DayList = ('1', '2')
-        self.CustomInputBoxDay = ttk.Combobox(self.CustomInputDayRow, width=4, values=self.DayList)
-        self.CustomInputBoxDay.pack(side = tk.LEFT)
-        self.CustomInputButtonToday = ttk.Button(self.CustomInputDayRow)
-        self.CustomInputButtonToday.config(text='今日の日付', command=lambda: self.SetDateToCustomInputField(datetime.date.today()))
-        self.CustomInputButtonToday.pack(side = tk.LEFT, padx='10')
-        self.CustomInputDayRow.pack(anchor = tk.W, padx='5', pady = '5')
-        ## カウンタ1
-        self.CustomInputCounter1Row = ttk.Frame(self.CustomInputFrame)
-        self.CustomInputLabel2 = ttk.Label(self.CustomInputCounter1Row)
-        self.CustomInputLabel2.config(text='カウンター1：')
-        self.CustomInputLabel2.pack(side = tk.LEFT)
-        self.CustomInputEntryCounter1 = ttk.Entry(self.CustomInputCounter1Row)
-        self.CustomInputEntryCounter1.pack(side = tk.LEFT)
-        self.CustomInputCounter1Row.pack(anchor = tk.W, padx='5', pady = '5')
+        # CustomInput初期化
+        self.CustomInputFrame = g_CustomInput.CreateFrame(self.frame_1)
 
         self.Commands_f.pack(fill="both", expand=True, padx='5', pady='5', anchor=tk.E, side='top')
         self.Commands_2_f.pack(fill=None, expand=True, padx='5', pady='5', anchor=tk.E, side='top')
         self.lf.config(height='200', text='Command')
         self.lf.grid(column='2', padx='5', row='1', rowspan='2', sticky='nsew')
-        self.CustomInputFrame.config(height='200', text='Custom Input')
         self.CustomInputFrame.grid(column='0', columnspan='3', padx='5', row='3', sticky='nsew')
         self.log_scroll = ScrollbarHelper(self.frame_1, scrolltype='both')
         self.logArea = tk.Text(self.log_scroll.container)
@@ -296,9 +259,6 @@ class PokeControllerApp:
 
         # 仮置フレームを削除
         self.frame_1_2.destroy()
-
-        # CustomInput初期化
-        g_CustomInputData.SetDateCallback = self.CustomInputSetDateCallback
 
         # 標準出力をログにリダイレクト
         sys.stdout = StdoutRedirector(self.logArea)
@@ -598,9 +558,8 @@ class PokeControllerApp:
         self._logger.info("Reloaded commands.")
 
     def startPlay(self, *event):
-        # CustomInput読み込み
-        g_CustomInputData.SetDate(int(self.CustomInputBoxYear.get()), int(self.CustomInputBoxMonth.get()), int(self.CustomInputBoxDay.get()), False)
-        g_CustomInputData.Counter1 = self.CustomInputEntryCounter1.getint(0)
+        # CustomInput処理
+        g_CustomInput.LoadFromView()
 
         if self.cur_command is None:
             print('No commands have been assigned yet.')
@@ -688,16 +647,8 @@ class PokeControllerApp:
         if self.startButton["text"] == "Stop":
             self.stopPlay()
 
-    def SetDateToCustomInputField(self, date):
-        self.CustomInputBoxYear.delete(0, tk.END)
-        self.CustomInputBoxYear.insert(tk.END, date.year)
-        self.CustomInputBoxMonth.delete(0, tk.END)
-        self.CustomInputBoxMonth.insert(tk.END, date.month)
-        self.CustomInputBoxDay.delete(0, tk.END)
-        self.CustomInputBoxDay.insert(tk.END, date.day)
-
-    def CustomInputSetDateCallback(self):
-        self.SetDateToCustomInputField(g_CustomInputData.Date)
+#    def CustomInputSetDateCallback(self):
+#        self.SetDateToCustomInputField(g_CustomInputData.Date)
 
 class StdoutRedirector(object):
     """

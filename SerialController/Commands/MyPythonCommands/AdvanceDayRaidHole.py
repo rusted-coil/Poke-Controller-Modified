@@ -4,7 +4,7 @@
 from Commands.Keys import Button
 from Commands.PythonCommandBase import PythonCommand
 
-from Commands.CustomInputData import g_CustomInputData
+from Commands.CustomInput import g_CustomInput
 
 from .Util.DayChanger import DayChanger
 
@@ -15,7 +15,7 @@ class AdvanceDayRaidHole(PythonCommand):
         super().__init__()
 
     def do(self):
-        dayChanger = DayChanger(g_CustomInputData.Date)
+        dayChanger = DayChanger(g_CustomInput.Model.Date)
         dayChanger.CursorLeftToRight(self)
         dayChanger.AdvanceDay(self)
-        g_CustomInputData.SetDate(dayChanger.CurrentDate.year, dayChanger.CurrentDate.month, dayChanger.CurrentDate.day, True)
+        g_CustomInput.SetDate(dayChanger.CurrentDate)
