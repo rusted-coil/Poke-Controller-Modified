@@ -49,7 +49,7 @@ class Camera:
 
         if os.name == 'nt':
             self._logger.debug("NT OS")
-            self.camera = cv2.VideoCapture(cameraId, cv2.CAP_DSHOW)
+            self.camera = cv2.VideoCapture(cameraId, cv2.CAP_ANY)
         # self.camera = cv2.VideoCapture(cameraId)
         else:
             self._logger.debug("Not NT OS")
@@ -65,6 +65,7 @@ class Camera:
         # self.camera.set(cv2.CAP_PROP_FPS, 60)
         self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, self.capture_size[0])
         self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.capture_size[1])
+        self.camera.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 
     # self.camera.set(cv2.CAP_PROP_SETTINGS, 0)
 

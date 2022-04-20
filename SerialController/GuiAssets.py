@@ -125,11 +125,12 @@ class CaptureArea(tk.Canvas):
         self.bind("<Control-Shift-ButtonRelease-1>", self.ReleaseRangeSS)
 
         # Set disabled image first
-        disabled_img = cv2.imread("../Images/disabled.png", cv2.IMREAD_GRAYSCALE)
-        disabled_pil = Image.fromarray(disabled_img)        
-        self.disabled_tk = ImageTk.PhotoImage(disabled_pil)
-        self.display_buffer = self.create_image(0, 0, image=self.disabled_tk, anchor=tk.NW)
-        self.display = self.create_image(0, 0, image=self.disabled_tk, anchor=tk.NW)
+        # 一旦preview描画を無効化
+#        disabled_img = cv2.imread("../Images/disabled.png", cv2.IMREAD_GRAYSCALE)
+#        disabled_pil = Image.fromarray(disabled_img)        
+#        self.disabled_tk = ImageTk.PhotoImage(disabled_pil)
+#        self.display_buffer = self.create_image(0, 0, image=self.disabled_tk, anchor=tk.NW)
+#        self.display = self.create_image(0, 0, image=self.disabled_tk, anchor=tk.NW)
 
     def ApplyLStickMouse(self):
         if self.master.is_use_left_stick_mouse.get():
@@ -437,9 +438,11 @@ class CaptureArea(tk.Canvas):
                 self.RSTICK_logger.debug(",".join(list(map(str, _))))
 
     def startCapture(self):
-        self.CaptureThread = threading.Thread(target = self.capture)
-        self.CaptureThread.daemon = True
-        self.CaptureThread.start()
+        # 一旦こちらのPreviewを無効化
+#        self.CaptureThread = threading.Thread(target = self.capture)
+#        self.CaptureThread.daemon = True
+#        self.CaptureThread.start()
+        pass
 
     def capture(self):
         lastFrameTk = None

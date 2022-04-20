@@ -39,6 +39,9 @@ Todo:
 # CustomInput対応
 from Commands.CustomInput import g_CustomInput
 
+# CustomPreview対応
+from CustomPreview import CustomPreview
+
 class PokeControllerApp:
     def __init__(self, master=None):
 
@@ -304,6 +307,13 @@ class PokeControllerApp:
         self.ser = Sender.Sender(self.is_show_serial)
         self.activateSerial()
         self.activateKeyboard()
+
+        # CustomPreviewに置き換え
+        self.CustomPreview = CustomPreview(self.camera, self.camera_lf)
+        self.CustomPreview.grid(column='0', columnspan='7', row='2', padx='5', pady='5', sticky=tk.NSEW)
+        self.CustomPreview.UpdateRunning(self.is_show_realtime.get())
+        self.cb1['command'] = lambda: self.CustomPreview.UpdateRunning(self.is_show_realtime.get())
+
         self.preview = CaptureArea(self.camera,
                                    self.fps.get(),
                                    self.is_show_realtime,
@@ -312,7 +322,7 @@ class PokeControllerApp:
                                    *list(map(int, self.show_size.get().split("x")))
                                    )
         self.preview.config(cursor='crosshair')
-        self.preview.grid(column='0', columnspan='7', row='2', padx='5', pady='5', sticky=tk.NSEW)
+#        self.preview.grid(column='0', columnspan='7', row='2', padx='5', pady='5', sticky=tk.NSEW)
         self.loadCommands()
 
         self.show_size_tmp = self.show_size_cb['values'].index(self.show_size_cb.get())
