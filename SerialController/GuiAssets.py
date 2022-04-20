@@ -9,6 +9,7 @@ from tkinter.scrolledtext import ScrolledText
 import numpy as np
 import datetime
 from collections import deque
+import threading
 
 from PIL import Image, ImageTk
 
@@ -437,7 +438,9 @@ class CaptureArea(tk.Canvas):
                 self.RSTICK_logger.debug(",".join(list(map(str, _))))
 
     def startCapture(self):
-        self.capture()
+        self.CaptureThread = threading.Thread(target = self.capture)
+        self.CaptureThread.daemon = True
+        self.CaptureThread.start()
 
     def capture(self):
         if self.is_show_var.get():
