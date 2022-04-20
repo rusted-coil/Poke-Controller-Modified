@@ -126,11 +126,10 @@ class CaptureArea(tk.Canvas):
 
         # Set disabled image first
         disabled_img = cv2.imread("../Images/disabled.png", cv2.IMREAD_GRAYSCALE)
-        disabled_pil = Image.fromarray(disabled_img)
+        disabled_pil = Image.fromarray(disabled_img)        
         self.disabled_tk = ImageTk.PhotoImage(disabled_pil)
-        self.im = self.disabled_tk
-        # self.configure(image=self.disabled_tk)  # labelからキャンバスに変更したので微修正
-        self.im_ = self.create_image(0, 0, image=self.disabled_tk, anchor=tk.NW)
+        self.display_buffer = self.create_image(0, 0, image=self.disabled_tk, anchor=tk.NW)
+        self.display = self.create_image(0, 0, image=self.disabled_tk, anchor=tk.NW)
 
     def ApplyLStickMouse(self):
         if self.master.is_use_left_stick_mouse.get():
@@ -443,6 +442,7 @@ class CaptureArea(tk.Canvas):
         self.CaptureThread.start()
 
     def capture(self):
+        lastFrameTk = None
         while True:
             if not self.is_show_var.get():
                 continue
@@ -453,13 +453,11 @@ class CaptureArea(tk.Canvas):
                 image_pil = Image.fromarray(image_rgb).resize(self.show_size)
                 image_tk = ImageTk.PhotoImage(image_pil)
 
-                self.im = image_tk
-                # self.configure( image=image_tk)
-                self.itemconfig(self.im_, image=image_tk)
+                self.itemconfig(self.display_buffer, image=lastFrameTk)
+                self.itemconfig(self.display, image=image_tk)
+                lastFrameTk = image_tk
             else:
-                self.im = self.disabled_tk
-                # self.configure(image=self.disabled_tk)
-                self.itemconfig(self.im_, image=self.disabled_tk)
+                self.itemconfig(self.display, image=self.disabled_tk)
 
     def saveCapture(self):
         self.camera.saveCapture()
