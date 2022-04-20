@@ -443,26 +443,23 @@ class CaptureArea(tk.Canvas):
         self.CaptureThread.start()
 
     def capture(self):
-        if self.is_show_var.get():
+        while True:
+            if not self.is_show_var.get():
+                continue
+
             image_bgr = self.camera.readFrame()
-        else:
-            self.after(self.next_frames, self.capture)
-            return
+            if image_bgr is not None:
+                image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
+                image_pil = Image.fromarray(image_rgb).resize(self.show_size)
+                image_tk = ImageTk.PhotoImage(image_pil)
 
-        if image_bgr is not None:
-            image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
-            image_pil = Image.fromarray(image_rgb).resize(self.show_size)
-            image_tk = ImageTk.PhotoImage(image_pil)
-
-            self.im = image_tk
-            # self.configure( image=image_tk)
-            self.itemconfig(self.im_, image=image_tk)
-        else:
-            self.im = self.disabled_tk
-            # self.configure(image=self.disabled_tk)
-            self.itemconfig(self.im_, image=self.disabled_tk)
-
-        self.after(self.next_frames, self.capture)
+                self.im = image_tk
+                # self.configure( image=image_tk)
+                self.itemconfig(self.im_, image=image_tk)
+            else:
+                self.im = self.disabled_tk
+                # self.configure(image=self.disabled_tk)
+                self.itemconfig(self.im_, image=self.disabled_tk)
 
     def saveCapture(self):
         self.camera.saveCapture()

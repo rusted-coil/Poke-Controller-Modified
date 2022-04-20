@@ -216,8 +216,8 @@ class ImageProcPythonCommand(PythonCommand):
     # 色の違いを考慮しないのであればパフォーマンスの点からuse_grayをTrueにしてグレースケール画像を使うことを推奨します
     def isContainTemplate(self, template_path, threshold=0.7, use_gray=True,
                           show_value=False, show_position=True, show_only_true_rect=True, ms=2000):
-        src = self.camera.readFrame()
-        src = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY) if use_gray else src
+        src = self.camera.image_bgr
+        src = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY) if use_gray else src.copy()
 
         template = cv2.imread(TEMPLATE_PATH + template_path, cv2.IMREAD_GRAYSCALE if use_gray else cv2.IMREAD_COLOR)
         w, h = template.shape[1], template.shape[0]
@@ -253,8 +253,8 @@ class ImageProcPythonCommand(PythonCommand):
 
     def isContainTemplate_max(self, template_path_list, threshold=0.7, use_gray=True,
                               show_value=False, show_position=True, show_only_true_rect=True, ms=2000):
-        src = self.camera.readFrame()
-        src = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY) if use_gray else src
+        src = self.camera.image_bgr
+        src = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY) if use_gray else src.copy()
 
         max_val_list = []
         judge_threshold_list = []
@@ -297,8 +297,8 @@ class ImageProcPythonCommand(PythonCommand):
     try:
         def isContainTemplateGPU(self, template_path, threshold=0.7, use_gray=True,
                                  show_value=False, not_show_false=True):
-            src = self.camera.readFrame()
-            src = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY) if use_gray else src
+            src = self.camera.image_bgr
+            src = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY) if use_gray else src.copy()
 
             self.gsrc.upload(src)
 
