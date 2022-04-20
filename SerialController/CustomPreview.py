@@ -8,6 +8,11 @@ import cv2
 
 from PIL import Image, ImageTk, ImageDraw
 
+class Rect:
+    def __init__(self, left, top, width, height):
+        self.TopLeft = (left, top)
+        self.BottomRight = (left + width, top + height)
+
 class CustomPreview(tk.Frame):
     @staticmethod
     def CvImageToTk(image):
@@ -24,6 +29,8 @@ class CustomPreview(tk.Frame):
         self.Camera = camera
 
         self.IsRunning = False
+        self.TargetRect = None
+        self.TargetRectBuffer = None
 
         # 描画用のDisplayとちらつき防止のDisplayBufferを作成
         self.DisplayBuffer = tk.Label(self)
@@ -54,10 +61,14 @@ class CustomPreview(tk.Frame):
     def PreviewLoop(self):
         lastFrameTk = None
         while self.IsRunning:
+            self.TargetRect = self.TargetRectBuffer
+
             frame = self.Camera.readFrame()
 
             # frameに対する処理
             frame = cv2.resize(frame, (640, 360))
+            if not self.TargetRect is None:
+                cv2.rectangle(frame, self.TargetRect.TopLeft, self.TargetRect.BottomRight, (0, 0, 255), 1)
 
             frameTk = self.CvImageToTk(frame)
             self.DisplayBufferImage = lastFrameTk # リソースが開放されないようにselfで持つ
@@ -69,4 +80,7 @@ class CustomPreview(tk.Frame):
         # リソースを解放
         self.DisplayBufferImage = None
         self.DisplayImage = None
+
+    def SetTargetRect(self, left, top, width, height):
+        self.TargetRectBuffer = Rect(left, top, width, height)
 
