@@ -8,6 +8,8 @@ import cv2
 
 from PIL import Image, ImageTk, ImageDraw
 
+from ImageProcessRequest import PatternMatchingRequest, RequestBase
+
 class Rect:
     def __init__(self, left, top, width, height):
         self.TopLeft = (left, top)
@@ -29,8 +31,8 @@ class CustomPreview(tk.Frame):
         self.Camera = camera
 
         self.IsRunning = False
-        self.TargetRect = None
-        self.TargetRectBuffer = None
+        self.Request = None
+        self.RequestBuffer = None
 
         # 描画用のDisplayとちらつき防止のDisplayBufferを作成
         self.DisplayBuffer = tk.Label(self)
@@ -61,14 +63,18 @@ class CustomPreview(tk.Frame):
     def PreviewLoop(self):
         lastFrameTk = None
         while self.IsRunning:
-            self.TargetRect = self.TargetRectBuffer
+            if not self.RequestBuffer is None:
+                self.Request = self.RequestBuffer
+                self.RequestBuffer = None
 
             frame = self.Camera.readFrame()
 
             # frameに対する処理
             frame = cv2.resize(frame, (640, 360))
-            if not self.TargetRect is None:
-                cv2.rectangle(frame, self.TargetRect.TopLeft, self.TargetRect.BottomRight, (0, 0, 255), 1)
+            if not self.Request is None:
+                frame = self.Request.Process(frame)
+                if self.Request.IsFinished:
+                    self.Request = None
 
             frameTk = self.CvImageToTk(frame)
             self.DisplayBufferImage = lastFrameTk # リソースが開放されないようにselfで持つ
@@ -81,6 +87,11 @@ class CustomPreview(tk.Frame):
         self.DisplayBufferImage = None
         self.DisplayImage = None
 
-    def SetTargetRect(self, left, top, width, height):
-        self.TargetRectBuffer = Rect(left, top, width, height)
+    # スクリーンショットを保存するリクエストを作成します。
+    def RequestScreenshot(self, targetRect=None):
+        self.RequestBuffer = PatternMatchingRequest(targetRect)
+
+    # パターンマッチングのリクエストを作成します。
+    def RequestPatternMatching(self, templatePath, threshold=0.7, isUseGrayScale=True, targetRect=None):
+        self.RequestBuffer = PatternMatchingRequest(targetRect)
 

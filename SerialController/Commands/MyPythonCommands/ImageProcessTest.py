@@ -14,7 +14,7 @@ class Mash_A(CustomPythonCommand):
     def do(self):
         print('ここにきたよ')
         while True:
-            self.Preview.SetTargetRect(100, 100, 50, 50)
+            self.Preview.RequestPatternMatching(None, targetRect=Rect(100, 100, 50, 50))
             self.wait(0.5)
-            self.Preview.SetTargetRect(200, 200, 50, 50)
+            self.Preview.RequestPatternMatching(None, targetRect=Rect(200, 200, 50, 50))
             self.wait(0.5)
