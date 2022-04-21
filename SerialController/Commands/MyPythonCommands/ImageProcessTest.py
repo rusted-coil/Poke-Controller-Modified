@@ -12,7 +12,6 @@ class Mash_A(CustomPythonCommand):
         super().__init__(preview)
 
     def do(self):
-        print('ここにきたよ')
         while True:
             self.Preview.RequestPatternMatching(None, targetRect=Rect(100, 100, 50, 50))
             self.wait(0.5)

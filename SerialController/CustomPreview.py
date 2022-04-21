@@ -5,6 +5,7 @@ import sys
 import threading
 import tkinter as tk
 import cv2
+from time import sleep
 
 from PIL import Image, ImageTk, ImageDraw
 
@@ -89,9 +90,13 @@ class CustomPreview(tk.Frame):
 
     # スクリーンショットを保存するリクエストを作成します。
     def RequestScreenshot(self, targetRect=None):
-        self.RequestBuffer = PatternMatchingRequest(targetRect)
+        request = PatternMatchingRequest(targetRect)
+        self.RequestBuffer = request
+        while not request.IsFinished:
+            sleep(0.1)
+        return request.Result
 
-    # パターンマッチングのリクエストを作成します。
+    # テンプレートマッチングのリクエストを作成します。
     def RequestPatternMatching(self, templatePath, threshold=0.7, isUseGrayScale=True, targetRect=None):
         self.RequestBuffer = PatternMatchingRequest(targetRect)
 
