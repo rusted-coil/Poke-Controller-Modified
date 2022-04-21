@@ -16,11 +16,19 @@ class RequestBase:
 
 # スクリーンショットを保存するリクエスト
 class ScreenshotRequest(RequestBase):
-    def __init__(self, targetRect):
+    def __init__(self, path, targetRect = None):
+        self.Path = path
         self.TargetRect = targetRect
 
     def Process(self, frame):
+        if not self.TargetRect is None:
+            (left, top) = self.TargetRect.TopLeft
+            (right, bottom) = self.TargetRect.BottomRight
+            frame = frame[top:bottom, left:right]
+        # 画像として保存する
+        cv2.imwrite(self.Path, frame)
         self.IsFinished = True
+        self.Result = True        
         return frame
 
 # パターンマッチングのリクエスト
