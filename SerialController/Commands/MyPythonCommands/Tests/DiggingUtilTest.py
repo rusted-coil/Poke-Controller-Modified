@@ -24,12 +24,12 @@ class DiggingUtilTest(PythonCommand):
             gridTypesLine = []
             for x in range(6):
                 grid = frame[y*30:y*30+30, x*30:x*30+30]
-                match = -1
+                match = 0
                 for i in range(3):
                     result = cv2.matchTemplate(grid, templates[i], cv2.TM_CCOEFF_NORMED)
                     ys, xs = np.where(result >= 0.7)
                     if len(ys) > 0:
-                        match = i
+                        match = i + 1
                         break
                 gridTypesLine.append(match)
             gridTypes.append(gridTypesLine)
