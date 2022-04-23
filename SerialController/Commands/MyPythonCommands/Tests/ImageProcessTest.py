@@ -1,21 +1,18 @@
-
+from socket import timeout
 import cv2
-from Commands.PythonCommandBase import PythonCommand
-from CustomPreview import Rect
-from ImageProcessRequest import ScreenshotRequest
+from Commands.CustomPythonCommandBase import CustomPythonCommand
+from ImageProcessRequest import Rect, ScreenshotRequest
 
 # ScreenshotRequestが正常に動くかテストします。
-class ScreenshotTest(PythonCommand):
-    NAME = 'スクリーンショットテスト'
+class ScreenshotTest(CustomPythonCommand):
+    NAME = 'ImageProcessテスト'
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, preview):
+        super().__init__(preview)
 
     def do(self):
-        frame = cv2.imread("../Images/template3.png", cv2.IMREAD_COLOR)
-        request = ScreenshotRequest("../Images/template3.png", Rect(5,5,20,20))
-        request.Process(frame)
-        if request.IsFinished and request.Result:
-            print("テスト成功")
-        else:
-            print("テスト失敗")
+        self.Preview.RequestTemplateExist(
+            parentCommand=self, 
+            templatePath="../Images/template1.png",
+            targetRect=Rect(50, 50, 50, 50),
+            timeout=10.0)

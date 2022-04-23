@@ -2,8 +2,6 @@
 import cv2
 import numpy as np
 from Commands.PythonCommandBase import PythonCommand
-from CustomPreview import Rect
-from ImageProcessRequest import ScreenshotRequest
 
 # DiggingUtilが正常に動くかテストします。
 class DiggingUtilTest(PythonCommand):

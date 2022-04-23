@@ -3,18 +3,18 @@
 
 import sys
 import threading
+import time
 import tkinter as tk
+from tracemalloc import start
 import cv2
 from time import sleep
 
 from PIL import Image, ImageTk, ImageDraw
 
-from ImageProcessRequest import PatternMatchingRequest, RequestBase
+from ImageProcessRequest import ScreenshotRequest, TemplateExistRequest, TemplatePositionRequest
 
-class Rect:
-    def __init__(self, left, top, width, height):
-        self.TopLeft = (left, top)
-        self.BottomRight = (left + width, top + height)
+class CancelRequest():
+    pass
 
 class CustomPreview(tk.Frame):
     @staticmethod
@@ -65,7 +65,7 @@ class CustomPreview(tk.Frame):
         lastFrameTk = None
         while self.IsRunning:
             if not self.RequestBuffer is None:
-                self.Request = self.RequestBuffer
+                self.Request = self.RequestBuffer if not type(self.RequestBuffer) is CancelRequest else None
                 self.RequestBuffer = None
 
             frame = self.Camera.readFrame()
@@ -88,15 +88,30 @@ class CustomPreview(tk.Frame):
         self.DisplayBufferImage = None
         self.DisplayImage = None
 
-    # スクリーンショットを保存するリクエストを作成します。
-    def RequestScreenshot(self, targetRect=None):
-        request = PatternMatchingRequest(targetRect)
+    # リクエストを処理します。
+    def RequestImpl(self, parentCommand, request, timeout):
+        startTime = time.perf_counter()
         self.RequestBuffer = request
+        # 結果待ちループ
         while not request.IsFinished:
+            if not parentCommand.alive:
+                self.RequestBuffer = CancelRequest()
+                return False
+            # 時間切れ
+            elif time.perf_counter() - startTime >= timeout:
+                self.RequestBuffer = CancelRequest()
+                return False
             sleep(0.1)
         return request.Result
 
-    # テンプレートマッチングのリクエストを作成します。
-    def RequestPatternMatching(self, templatePath, threshold=0.7, isUseGrayScale=True, targetRect=None):
-        self.RequestBuffer = PatternMatchingRequest(targetRect)
+    # スクリーンショットを保存するリクエストを作成します。
+    def RequestScreenshot(self, parentCommand, savePath, targetRect=None, isUseGrayScale=True, timeout=1.0):
+        return self.RequestImpl(parentCommand, ScreenshotRequest(savePath, targetRect, isUseGrayScale), timeout)
 
+    # テンプレートマッチングを行い、テンプレートが存在するかどうかを返すリクエストを実行します。
+    def RequestTemplateExist(self, parentCommand, templatePath, targetRect=None, isUseGrayScale=True, threshold=0.7, timeout=1.0):
+        return self.RequestImpl(parentCommand, TemplateExistRequest(templatePath, targetRect, isUseGrayScale, threshold), timeout)
+
+    # テンプレートマッチングを行い、最も類似度の高い中心座標を返すリクエストを実行します。
+    def RequestTemplatePosition(self, parentCommand, templatePath, targetRect=None, isUseGrayScale=True, threshold=0.7, timeout=1.0):
+        return self.RequestImpl(parentCommand, TemplatePositionRequest(templatePath, targetRect, isUseGrayScale, threshold), timeout)
