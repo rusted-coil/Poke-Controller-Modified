@@ -16,8 +16,8 @@ class DiggingImageProcessor:
                 result = preview.RequestTemplateExist(
                     parentCommand=parentCommand, 
                     templatePath=pathList[i],
-                    targetRect=Rect(88 + x*30, 44 + y*30, 30, 30),
-                    timeout=0.1) # 掘る領域左上は88, 1マスは30x30
+                    targetRect=Rect(88 + x*30, 44 + y*30, 30, 30), # 掘る領域左上は88, 1マスは30x30
+                    timeout=0.0)
                 if result:
                     match = i + 1
                     break

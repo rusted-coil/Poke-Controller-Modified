@@ -31,6 +31,9 @@ class CustomPreview(tk.Frame):
 
         self.Camera = camera
 
+        self.InnerLock = False
+        self.OuterLock = False
+
         self.IsRunning = False
         self.Request = None
         self.RequestBuffer = None
@@ -68,7 +71,11 @@ class CustomPreview(tk.Frame):
                 self.Request = self.RequestBuffer if not type(self.RequestBuffer) is CancelRequest else None
                 self.RequestBuffer = None
 
+            while self.OuterLock:
+                pass
+            self.InnerLock = True
             frame = self.Camera.readFrame()
+            self.InnerLock = False
 
             # frameに対する処理
             frame = cv2.resize(frame, (640, 360))
@@ -90,27 +97,38 @@ class CustomPreview(tk.Frame):
 
     # リクエストを処理します。
     def RequestImpl(self, parentCommand, request, timeout):
-        startTime = time.perf_counter()
-        self.RequestBuffer = request
-        # 結果待ちループ
-        while not request.IsFinished:
-            if not parentCommand.alive:
-                self.RequestBuffer = CancelRequest()
-                return False
-            # 時間切れ
-            elif time.perf_counter() - startTime >= timeout:
-                self.RequestBuffer = CancelRequest()
-                return False
-            sleep(0.1)
-        return request.Result
+        if timeout == 0.0: # Instantモード
+            while self.InnerLock:
+                pass
+            self.OuterLock = True
+            frame = self.Camera.readFrame()
+            self.OuterLock = False
+            frame = cv2.resize(frame, (640, 360))
+            request.Process(frame)
+            return request.Result if request.IsFinished else None
+        else:
+            startTime = time.perf_counter()
+            self.RequestBuffer = request
+            # 結果待ちループ
+            while not request.IsFinished:
+                if not parentCommand.alive:
+                    self.RequestBuffer = CancelRequest()
+                    return False
+                # 時間切れ
+                elif time.perf_counter() - startTime >= timeout:
+                    self.RequestBuffer = CancelRequest()
+                    return False
+                sleep(0.1)
+            return request.Result
 
     # スクリーンショットを保存するリクエストを作成します。
-    def RequestScreenshot(self, parentCommand, savePath, targetRect=None, isUseGrayScale=True, timeout=1.0):
-        return self.RequestImpl(parentCommand, ScreenshotRequest(savePath, targetRect, isUseGrayScale), timeout)
+    def RequestScreenshot(self, parentCommand, savePath, targetRect=None, isUseGrayScale=True):
+        return self.RequestImpl(parentCommand, ScreenshotRequest(savePath, targetRect, isUseGrayScale), 0.0)
 
     # テンプレートマッチングを行い、テンプレートが存在するかどうかを返すリクエストを実行します。
     def RequestTemplateExist(self, parentCommand, templatePath, targetRect=None, isUseGrayScale=True, threshold=0.7, timeout=1.0):
-        return self.RequestImpl(parentCommand, TemplateExistRequest(templatePath, targetRect, isUseGrayScale, threshold), timeout)
+        result = self.RequestImpl(parentCommand, TemplateExistRequest(templatePath, targetRect, isUseGrayScale, threshold), timeout)
+        return result if not result is None else False
 
     # テンプレートマッチングを行い、最も類似度の高い中心座標を返すリクエストを実行します。
     def RequestTemplatePosition(self, parentCommand, templatePath, targetRect=None, isUseGrayScale=True, threshold=0.7, timeout=1.0):
