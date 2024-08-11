@@ -83,3 +83,23 @@ class AdvanceDayRaidHoleFour(PythonCommand):
     def do(self):
         for i in range(4):
             AdvanceDayRaidHole.AdvanceDay(self)
+
+# FastModeに入り、本体の日付変更にカーソルを合わせた状態からスタート
+class AdvanceDayFast(PythonCommand):
+    NAME = 'n日進める(FastMode)'
+
+    def __init__(self):
+        super().__init__()
+
+    def do(self):
+        count = g_CustomInput.Model.Int1
+        dayChanger = DayChanger(g_CustomInput.Model.Date)
+        dayChanger.CursorLeftToRight(self) # 今のカーソルの位置がわからないので右端にあわせる
+        for i in range(count):
+            # 日付変更処理
+            dayChanger.AdvanceDay(self)
+            self.wait(0.5)
+
+            # 事後処理
+            g_CustomInput.SetDate(dayChanger.CurrentDate)
+            g_CustomInput.SetInt1(count - (i + 1))

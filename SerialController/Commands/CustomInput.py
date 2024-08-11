@@ -89,7 +89,11 @@ class CustomInputView:
 
     # 数値1
     def GetInt1(self):
-        return self.Int1Entry.getint(0)
+        try:
+            return int(self.Int1Entry.get())
+        except ValueError:
+            print('Int1の値が不正です')
+            return 0        
     def SetInt1(self, value):
         self.Int1Entry.delete(0, tk.END)
         self.Int1Entry.insert(tk.END, value)
@@ -119,6 +123,11 @@ class CustomInputController:
     def SetDate(self, date):
         self.Model.Date = date
         self.View.SetDate(date)
+
+    # Int1を反映します。
+    def SetInt1(self, value):
+        self.Model.Int1 = value
+        self.View.SetInt1(value)
 
 #--------------------------------------------------------------
 
