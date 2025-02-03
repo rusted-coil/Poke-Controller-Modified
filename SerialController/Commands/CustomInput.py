@@ -69,6 +69,7 @@ class CustomInputView:
         self.Int1Label.pack(side = tk.LEFT)
 
         self.Int1Entry = ttk.Entry(self.Int1Row)
+        self.Int1Entry.setvar('0')
         self.Int1Entry.pack(side = tk.LEFT)
 
         self.Int1Row.pack(anchor = tk.W, padx='5', pady = '5')

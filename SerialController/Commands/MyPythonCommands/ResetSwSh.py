@@ -10,15 +10,19 @@ class Reset(PythonCommand):
     def __init__(self):
         super().__init__()
 
-    def do(self):
-        self.press(Button.HOME, 0.05, 1.1)
-        self.press(Button.X, 0.05, 0.3)
-        self.press(Button.A, 0.05, 2.0)
+    @staticmethod
+    def DoReset(cmd):
+        cmd.press(Button.HOME, 0.05, 1.1)
+        cmd.press(Button.X, 0.05, 0.3)
+        cmd.press(Button.A, 0.05, 2.0)
         for i in range(10):
-            self.press(Button.A, 0.05, 0.3)
-        self.wait(16.0)
-        self.press(Button.A, 0.05, 9.0)
-        self.press(Button.A, 0.05, 0.05)
+            cmd.press(Button.A, 0.05, 0.3)
+        cmd.wait(16.0)
+        cmd.press(Button.A, 0.05, 9.0)
+        cmd.press(Button.A, 0.05, 0.05)
+
+    def do(self):
+        Reset.DoReset(self)
 
 class CampReset(PythonCommand):
     NAME = 'キャンプリセット(SwSh)'

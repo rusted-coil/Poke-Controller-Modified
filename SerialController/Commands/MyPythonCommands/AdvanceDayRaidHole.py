@@ -7,6 +7,7 @@ from Commands.PythonCommandBase import PythonCommand
 from Commands.CustomInput import g_CustomInput
 
 from .Util.DayChanger import DayChanger
+from .ResetSwSh import Reset
 
 # 1日進める処理実装
 class AdvanceDayRaidHole:
@@ -74,6 +75,18 @@ class AdvanceDayRaidHoleThree(PythonCommand):
         for i in range(3):
             AdvanceDayRaidHole.AdvanceDay(self)
 
+class ResetAndAdvanceDayRaidHoleThree(PythonCommand):
+    NAME = 'リセットして3日進める(RaidHole)'
+
+    def __init__(self):
+        super().__init__()
+
+    def do(self):
+        Reset.DoReset(self)
+        self.wait(1.0)
+        for i in range(3):
+            AdvanceDayRaidHole.AdvanceDay(self)
+
 class AdvanceDayRaidHoleFour(PythonCommand):
     NAME = '4日進める(RaidHole)'
 
@@ -82,6 +95,16 @@ class AdvanceDayRaidHoleFour(PythonCommand):
 
     def do(self):
         for i in range(4):
+            AdvanceDayRaidHole.AdvanceDay(self)
+
+class AdvanceDayRaidHoleInfinite(PythonCommand):
+    NAME = '無限W稼ぎ(RaidHole)'
+
+    def __init__(self):
+        super().__init__()
+
+    def do(self):
+        while(True):
             AdvanceDayRaidHole.AdvanceDay(self)
 
 # FastModeに入り、本体の日付変更にカーソルを合わせた状態からスタート
