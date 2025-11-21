@@ -38,14 +38,11 @@ class PokeController_Menubar(tk.Menu):
         self.menu.add('command', command=self.exit, label='終了')
 
         self.AssignMenuCommand()
-        self.LineTokenSetting()
 
     # TODO: setup command_id_arg 'false' for menuitem.
 
     def AssignMenuCommand(self):
         self._logger.debug("Assigning menu command")
-        self.menu_command.add('command', command=self.LineTokenSetting, label='LINE Token Check')
-        # TODO: setup command_id_arg 'false' for menuitem.
         self.menu_command.add('command', command=self.OpenPokeHomeCoop, label='Pokemon Home 連携')
         self.menu_command.add('command', command=self.OpenKeyConfig, label='キーコンフィグ')
         self.menu_command.add('command', command=self.ResetWindowSize, label='画面サイズのリセット')
@@ -66,14 +63,6 @@ class PokeController_Menubar(tk.Menu):
         self._logger.debug("Close Pokemon home cooperate window")
         self.poke_treeview.destroy()
         self.poke_treeview = None
-
-    def LineTokenSetting(self):
-        self._logger.debug("Show line API")
-        if self.line is None:
-            self.line = Line_Notify(self.camera)
-        print(self.line)
-        self.line.getRateLimit()
-        # LINE.send_text_n_image("CAPTURE")
 
     def OpenKeyConfig(self):
         self._logger.debug("Open KeyConfig window")

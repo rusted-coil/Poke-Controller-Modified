@@ -9,7 +9,6 @@ import random
 import time
 from logging import getLogger, DEBUG, NullHandler
 
-from LineNotify import Line_Notify
 from . import CommandBase
 from .Keys import Button, Direction, KeyPress
 
@@ -28,8 +27,6 @@ class PythonCommand(CommandBase.Command):
         self.thread = None
         self.alive = True
         self.postProcess = None
-        self.Line = Line_Notify()
-
         self._logger = getLogger(__name__)
         self._logger.addHandler(NullHandler())
         self._logger.setLevel(DEBUG)
@@ -202,7 +199,6 @@ class ImageProcPythonCommand(PythonCommand):
         self._logger.propagate = True
 
         self.camera = cam
-        self.Line = Line_Notify(self.camera)
 
         self.gui = gui
 
@@ -341,6 +337,3 @@ class ImageProcPythonCommand(PythonCommand):
         # remove noise
         mask = cv2.medianBlur(img_th, 3)
         return mask
-
-    def LINE_image(self, txt="", token='token'):
-        self.Line.send_text_n_image(txt, token)
