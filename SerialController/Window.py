@@ -210,18 +210,15 @@ class PokeControllerApp:
 
         self.Commands_f = ttk.Frame(self.lf)
         self.Commands_2_f = ttk.Frame(self.lf)
-        self.Command_nb = ttk.Notebook(self.Commands_f)
-        self.py_cb = ttk.Combobox(self.Command_nb)
+        self.tag_cb = ttk.Combobox(self.Commands_f)
+        self.tag_name = tk.StringVar()
+        self.tag_cb.config(state='readonly', textvariable=self.tag_name)
+        self.tag_cb.pack(fill="x", expand=False, padx='5', pady='5', side='top')
+        self.tag_cb.bind('<<ComboboxSelected>>', self.selectTag, add='')
+        self.py_cb = ttk.Combobox(self.Commands_f)
         self.py_name = tk.StringVar()
         self.py_cb.config(state='readonly', textvariable=self.py_name)
-        self.py_cb.pack(side='top')
-        self.Command_nb.add(self.py_cb, padding='5', text='Python Command')
-        self.mcu_cb = ttk.Combobox(self.Command_nb)
-        self.mcu_name = tk.StringVar()
-        self.mcu_cb.config(state='readonly', textvariable=self.mcu_name)
-        self.mcu_cb.pack(side='top')
-        self.Command_nb.add(self.mcu_cb, padding='5', text='Mcu Command')
-        self.Command_nb.pack(fill="both", expand=True, padx='5', pady='5', side='left')
+        self.py_cb.pack(fill="x", expand=False, padx='5', pady='5', side='top')
 
         self.OpenCommandDirButton = ttk.Button(self.Commands_f)
         self.OpenCommandDirButton.config(image=self.open_folder_img)
@@ -403,10 +400,7 @@ class PokeControllerApp:
             subprocess.run(command, shell=True)
 
     def OpenCommandDir(self):
-        if self.Command_nb.index("current") == 0:
-            directory = os.path.join("Commands", "MyPythonCommands")
-        else:
-            directory = os.path.join("Commands", "MyMcuCommands")
+        directory = os.path.join("Commands", "MyPythonCommands")
         self._logger.debug(f'Open folder: \'{directory}\'')
         if platform.system() == 'Windows':
             subprocess.call(f'explorer "{directory}"')
@@ -515,24 +509,54 @@ class PokeControllerApp:
     def loadCommands(self):
         self.py_loader = CommandLoader(util.ospath('Commands/MyPythonCommands'),
                                        PythonCommandBase.PythonCommand)  # コマンドの読み込み
-        self.mcu_loader = CommandLoader(util.ospath('Commands/MyMcuCommands'), McuCommandBase.McuCommand)
         self.py_classes = self.py_loader.load()
-        self.mcu_classes = self.mcu_loader.load()
         self.setCommandItems()
         self.assignCommand()
 
-    def setCommandItems(self):
-        self.py_cb['values'] = [c.NAME for c in self.py_classes]
-        self.py_cb.current(0)
-        self.mcu_cb['values'] = [c.NAME for c in self.mcu_classes]
-        self.mcu_cb.current(0)
+    def _getCommandTag(self, cmd_class):
+        return getattr(cmd_class, 'TAG', 'Default')
+
+    def setCommandItems(self, selected_tag=None, selected_command=None):
+        tags = sorted({self._getCommandTag(c) for c in self.py_classes})
+        self.tag_cb['values'] = ['All'] + tags
+
+        if selected_tag in self.tag_cb['values']:
+            self.tag_cb.set(selected_tag)
+        elif self.tag_cb.get() in self.tag_cb['values']:
+            pass
+        elif self.tag_cb['values']:
+            self.tag_cb.current(0)
+        else:
+            self.tag_cb.set('')
+
+        current_tag = self.tag_cb.get()
+        if current_tag == 'All':
+            self.filtered_py_classes = self.py_classes
+        else:
+            self.filtered_py_classes = [c for c in self.py_classes if self._getCommandTag(c) == current_tag]
+
+        self.py_cb['values'] = [c.NAME for c in self.filtered_py_classes]
+        if selected_command in self.py_cb['values']:
+            self.py_cb.set(selected_command)
+        elif self.py_cb['values']:
+            self.py_cb.current(0)
+        else:
+            self.py_cb.set('')
+
+    def selectTag(self, event=None):
+        oldval_py = self.py_cb.get()
+        self.setCommandItems(selected_tag=self.tag_cb.get(), selected_command=oldval_py)
+        self.assignCommand()
 
     def assignCommand(self):
         # 選択されているコマンドを取得する
-        self.mcu_cur_command = self.mcu_classes[self.mcu_cb.current()]()  # MCUコマンドについて
-
         # pythonコマンドは画像認識を使うかどうかで分岐している
-        cmd_class = self.py_classes[self.py_cb.current()]
+        if not self.py_cb['values']:
+            self.py_cur_command = None
+            self.cur_command = None
+            return
+
+        cmd_class = self.filtered_py_classes[self.py_cb.current()]
         if issubclass(cmd_class, CustomPythonCommand):
             self.py_cur_command = cmd_class(self.CustomPreview)
         elif issubclass(cmd_class, PythonCommandBase.ImageProcPythonCommand):
@@ -544,26 +568,17 @@ class PokeControllerApp:
                 self.py_cur_command = cmd_class(self.camera)
         else:
             self.py_cur_command = cmd_class()
-
-        if self.Command_nb.index(self.Command_nb.select()) == 0:
-            self.cur_command = self.py_cur_command
-        else:
-            self.cur_command = self.mcu_cur_command
+        self.cur_command = self.py_cur_command
 
     def reloadCommands(self):
         # 表示しているタブを読み取って、どのコマンドを表示しているか取得、リロード後もそれが選択されるようにする
-        oldval_mcu = self.mcu_cb.get()
+        oldval_tag = self.tag_cb.get()
         oldval_py = self.py_cb.get()
 
         self.py_classes = self.py_loader.reload()
-        self.mcu_classes = self.mcu_loader.reload()
 
         # Restore the command selecting state if possible
-        self.setCommandItems()
-        if oldval_mcu in self.mcu_cb['values']:
-            self.mcu_cb.set(oldval_mcu)
-        if oldval_py in self.py_cb['values']:
-            self.py_cb.set(oldval_py)
+        self.setCommandItems(selected_tag=oldval_tag, selected_command=oldval_py)
         self.assignCommand()
         print('Finished reloading command modules.')
         self._logger.info("Reloaded commands.")

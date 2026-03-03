@@ -7,6 +7,7 @@ from Commands.PythonCommandBase import PythonCommand
 # ハピナスレイド周回用
 # リセットからスタート
 class Reset(PythonCommand):
+    TAG = 'SV'
     NAME = 'レイド周回(SV)'
 
     def __init__(self):

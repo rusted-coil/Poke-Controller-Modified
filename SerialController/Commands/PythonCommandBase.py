@@ -21,6 +21,8 @@ class StopThread(Exception):
 
 # Python command
 class PythonCommand(CommandBase.Command):
+    TAG = 'Default'
+
     def __init__(self):
         super(PythonCommand, self).__init__()
         self.keys = None
