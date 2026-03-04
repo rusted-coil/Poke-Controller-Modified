@@ -7,15 +7,19 @@ from Commands.CustomPythonCommandBase import CustomPythonCommand
 from ImageProcessRequest import Rect
 
 # シンボル前でレポートした状態で話しかけられる所に立ってスタート
-class ShinySV(CustomPythonCommand):
+class ShinyFRLGStarter(CustomPythonCommand):
+    TAG = 'FRLG'
     NAME = 'FRLG御三家色厳選'
 
     def __init__(self, preview):
         super().__init__(preview)
 
     def do(self):        
-        self.Reset()
+        f1 = 0
+        f2 = 0
         while True:
+            self.Reset(f1)
+            self.wait(f2 / 60.0)
             for i in range(20): # ポケモンを貰う
                 self.press(Button.A, 0.05, 0.2)
             for i in range(20): # ニックネームをつけない
@@ -28,8 +32,13 @@ class ShinySV(CustomPythonCommand):
             self.press(Button.A, 0.05, 0.5)
             self.wait(1.0)
             if self.CheckFrame():
-                self.Reset()
+                print('f1: ' + str(f1) + ' / f2: ' + str(f2))
+                f2 += 1
+                if f2 == 100:
+                    f2 = 0
+                    f1 += 1
             else:
+                print('f1: ' + str(f1) + ' / f2: ' + str(f2))
                 # 色違い
                 break
 
@@ -40,10 +49,13 @@ class ShinySV(CustomPythonCommand):
             y=45,
             expectedBGR=(240, 173, 207))
     
-    def Reset(self):
+    def Reset(self, f1):
         self.press(Button.A | Button.B | Button.PLUS | Button.MINUS)
-        for i in range(20):
-            self.press(Button.A, 0.05, 0.2)
-        self.wait(1.8 + random.randint(0, 59) / 60)
+        self.wait(4.0)
+        self.press(Button.A)
+        self.wait(2.0)
+        self.press(Button.A)
+        self.wait(2.0 + f1 / 60.0) # タイトル画面で待機
+        self.press(Button.A, 0.05, 3.0)
         self.press(Button.A, 0.05, 1.0)
         self.press(Button.B, 0.05, 2.0) # あらすじスキップ
