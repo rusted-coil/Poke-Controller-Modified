@@ -20,7 +20,7 @@ class Rect:
     def BottomRight(self):
         return (self.Left + self.Width, self.Top + self.Height)
 
-# 画像処理のリクエストを表す基底クラスです。
+# Base class representing image processing requests.
 class RequestBase:
     def __init__(self, targetRect):
         self.TargetRect = targetRect
@@ -31,7 +31,7 @@ class RequestBase:
             cv2.rectangle(frame, self.TargetRect.TopLeft(), self.TargetRect.BottomRight(), (0, 0, 255), 1)
         return frame
 
-# スクリーンショットを保存するリクエスト
+# Request to save a screenshot
 class ScreenshotRequest(RequestBase):
     def __init__(self, savePath, targetRect = None, isUseGrayScale=True):
         super().__init__(targetRect)
@@ -41,13 +41,13 @@ class ScreenshotRequest(RequestBase):
     def Process(self, frame):
         src = self.TargetRect.SliceFrame(frame) if not self.TargetRect is None else frame
         src = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY) if self.IsUseGrayScale else src
-        # 画像として保存する
+        # Save as image
         cv2.imwrite(self.Path, src)
         self.IsFinished = True
         self.Result = True        
         return frame
 
-# テンプレートマッチングを行うリクエストの基底
+# Base class for template matching requests
 class TemplateMatchingRequestBase(RequestBase):
     def __init__(self, templatePath, targetRect=None, isUseGrayScale=True):
         super().__init__(targetRect)
@@ -59,7 +59,7 @@ class TemplateMatchingRequestBase(RequestBase):
         src = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY) if self.IsUseGrayScale else src
         return cv2.matchTemplate(src, self.Template, cv2.TM_CCOEFF_NORMED)
 
-# テンプレートマッチングを行い、存在をチェックするリクエスト
+# Request to perform template matching and check for existence
 class TemplateExistRequest(TemplateMatchingRequestBase):
     def __init__(self, templatePath, targetRect=None, isUseGrayScale=True, threshold=0.7):
         super().__init__(templatePath, targetRect, isUseGrayScale)
@@ -73,7 +73,7 @@ class TemplateExistRequest(TemplateMatchingRequestBase):
             self.Result = True
         return super().Process(frame)
 
-# テンプレートマッチングを行い、最も類似度の高い中心座標を取得するリクエスト
+# Request to perform template matching and get the center coordinates with the highest similarity
 class TemplatePositionRequest(TemplateMatchingRequestBase):
     def __init__(self, templatePath, targetRect=None, isUseGrayScale=True, threshold=0.7):
         super().__init__(templatePath, targetRect, isUseGrayScale)
@@ -87,14 +87,14 @@ class TemplatePositionRequest(TemplateMatchingRequestBase):
             self.Result = maxLoc
         return super().Process(frame)
 
-# 指定した座標のピクセルが特定の色であるかを判定するリクエスト
+# Request to determine if the pixel at the specified coordinates is a specific color
 class PixelColorMatchRequest(RequestBase):
     """
-    指定座標 (x, y) のピクセル色が、期待する色 (BGR) と一致するかを判定します。
-    tolerance で各チャンネルの許容誤差を指定できます（デフォルト: 10）。
+    Determines if the pixel color at the specified coordinates (x, y) matches the expected color (BGR).
+    You can specify the tolerance for each channel (default: 10).
 
-    使用例:
-        # (100, 200) の座標が赤色 (BGR: 0, 0, 255) かどうかを許容誤差 15 で判定
+    Usage example:
+        # Check if the coordinates (100, 200) are red (BGR: 0, 0, 255) with tolerance 15
         req = PixelColorMatchRequest(
             x=100, y=200,
             expectedBGR=(0, 0, 255),
@@ -104,11 +104,11 @@ class PixelColorMatchRequest(RequestBase):
     def __init__(self, x, y, expectedBGR, tolerance=10, targetRect=None):
         """
         Args:
-            x (int): 判定対象の X 座標（targetRect が指定されている場合はその領域内の相対座標）
-            y (int): 判定対象の Y 座標（targetRect が指定されている場合はその領域内の相対座標）
-            expectedBGR (tuple): 期待する色を (B, G, R) のタプルで指定
-            tolerance (int): 各チャンネルの許容誤差（0 なら完全一致のみ）
-            targetRect (Rect|None): 判定対象の領域。None の場合はフレーム全体を対象とする
+            x (int): X coordinate to check (relative to targetRect if specified)
+            y (int): Y coordinate to check (relative to targetRect if specified)
+            expectedBGR (tuple): Expected color as (B, G, R) tuple
+            tolerance (int): Tolerance for each channel (0 for exact match only)
+            targetRect (Rect|None): Target area. If None, checks the entire frame
         """
         super().__init__(targetRect)
         self.X = x
@@ -119,14 +119,14 @@ class PixelColorMatchRequest(RequestBase):
     def Process(self, frame):
         src = self.TargetRect.SliceFrame(frame) if not self.TargetRect is None else frame
 
-        # 座標がフレーム範囲内かチェック
+        # Check if coordinates are within frame bounds
         h, w = src.shape[:2]
         if 0 <= self.X < w and 0 <= self.Y < h:
             pixel = np.array(src[self.Y, self.X], dtype=np.int16)
             diff = np.abs(pixel - self.ExpectedBGR)
             matched = bool(np.all(diff <= self.Tolerance))
 
-            # デバッグ用: 座標・実際の色・期待色・差分・判定結果を表示
+            # Debug: Display coordinates, actual color, expected color, difference, and result
 #            print(f"[PixelColorMatch] pos=({self.X}, {self.Y}) "
 #                  f"actual_BGR=({pixel[0]}, {pixel[1]}, {pixel[2]}) "
 #                  f"expected_BGR=({self.ExpectedBGR[0]}, {self.ExpectedBGR[1]}, {self.ExpectedBGR[2]}) "
@@ -137,7 +137,7 @@ class PixelColorMatchRequest(RequestBase):
             self.IsFinished = True
             self.Result = matched
         else:
-            # 座標が範囲外の場合は一致として完了
+            # If coordinates are out of bounds, consider it not matched and complete
 #            print(f"[PixelColorMatch] pos=({self.X}, {self.Y}) is out of bounds "
 #                  f"(frame size: {w}x{h})")
             self.IsFinished = True

@@ -17,15 +17,15 @@ class CustomInputModel:
 #--------------------------------------------------------------
 
 class CustomInputView:
-    # Frameを生成します。
+    # Generate Frame.
     def CreateFrame(self, master):
         self.Frame = ttk.Labelframe(master)
 
-        ## 日付
+        ## Date
         self.DateRow = ttk.Frame(self.Frame)
 
         self.DateLabel = ttk.Label(self.DateRow)
-        self.DateLabel.config(text='日付:')
+        self.DateLabel.config(text='Date:')
         self.DateLabel.pack(side = tk.LEFT)
 
         self.YearLabel = ttk.Label(self.DateRow)
@@ -56,16 +56,16 @@ class CustomInputView:
         self.DayBox.pack(side = tk.LEFT)
 
         self.TodayButton = ttk.Button(self.DateRow)
-        self.TodayButton.config(text='今日の日付', command=lambda: self.SetDate(datetime.date.today()))
+        self.TodayButton.config(text='Today\'s Date', command=lambda: self.SetDate(datetime.date.today()))
         self.TodayButton.pack(side = tk.LEFT, padx='10')
 
         self.DateRow.pack(anchor = tk.W, padx='5', pady = '5')
 
-        ## 数値1
+        ## Number 1
         self.Int1Row = ttk.Frame(self.Frame)
 
         self.Int1Label = ttk.Label(self.Int1Row)
-        self.Int1Label.config(text='数値1:')
+        self.Int1Label.config(text='Number 1:')
         self.Int1Label.pack(side = tk.LEFT)
 
         self.Int1Entry = ttk.Entry(self.Int1Row)
@@ -77,7 +77,7 @@ class CustomInputView:
         self.Frame.config(height='200', text='Custom Input')
         return self.Frame
 
-    # 日付
+    # Date
     def GetDate(self):
         return datetime.date(int(self.YearBox.get()), int(self.MonthBox.get()), int(self.DayBox.get()))
     def SetDate(self, date):
@@ -88,12 +88,12 @@ class CustomInputView:
         self.DayBox.delete(0, tk.END)
         self.DayBox.insert(tk.END, date.day)
 
-    # 数値1
+    # Number 1
     def GetInt1(self):
         try:
             return int(self.Int1Entry.get())
         except ValueError:
-            print('Int1の値が不正です')
+            print('Int1 value is invalid')
             return 0        
     def SetInt1(self, value):
         self.Int1Entry.delete(0, tk.END)
@@ -107,7 +107,7 @@ class CustomInputController:
     Model = CustomInputModel()
     View = None 
 
-    # ViewであるFrameを生成します。
+    # Generate the Frame that is the View.
     def CreateFrame(self, master):
         if self.View is None:
             self.View = CustomInputView()
@@ -115,17 +115,17 @@ class CustomInputController:
         else:
             return self.View.Frame
 
-    # Viewに入力されている内容をModelにロードします。
+    # Load the content entered in the View into the Model.
     def LoadFromView(self):
         self.Model.Date = self.View.GetDate()
         self.Model.Int1 = self.View.GetInt1()
 
-    # 日付を反映します。
+    # Reflect the date.
     def SetDate(self, date):
         self.Model.Date = date
         self.View.SetDate(date)
 
-    # Int1を反映します。
+    # Reflect Int1.
     def SetInt1(self, value):
         self.Model.Int1 = value
         self.View.SetInt1(value)

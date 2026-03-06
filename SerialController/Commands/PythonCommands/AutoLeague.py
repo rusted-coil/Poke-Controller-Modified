@@ -6,9 +6,9 @@ from Commands.PythonCommandBase import PythonCommand
 
 
 # Auto league
-# 自動リーグ周回(画像認識なし)
+# Automatic League Loop (No Image Recognition)
 class AutoLeague(PythonCommand):
-    NAME = '自動リーグ周回'
+    NAME = 'Automatic League Loop'
 
     def __init__(self):
         super().__init__()

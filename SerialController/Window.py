@@ -28,19 +28,19 @@ VERSION = "v3.0.2.7.0 Modified"  # based on 1.0-beta3
 
 '''
 Todo:
-・デバッグ用にPoke-Controller本体にコントローラーを接続して動かしたい
+For debugging purposes, I want to connect a controller to the Poke-Controller main unit and make it work.
 
-・keyboardからHatを動かせないから、Hatを動かせるようにしたい
-→モンハンのメニューの選択はHatで選ばれる
+Since I can't move the Hat from the keyboard, I want to make it possible to move the Hat.
+?Menu selection in Monster Hunter is done with Hat.
 ---> Done
 
-・画像認識の時の枠を設定でON/OFFできると嬉しい
+It would be nice if the frame during image recognition can be turned ON/OFF in settings.
 '''
 
-# CustomInput対応
+# CustomInput support
 from Commands.CustomInput import g_CustomInput
 
-# CustomPreview対応
+# CustomPreview support
 from CustomPreview import CustomPreview
 
 class PokeControllerApp:
@@ -63,7 +63,7 @@ class PokeControllerApp:
         self.camera_dic = None
 
         '''
-        ここから
+        From here
         '''
         # build ui
         self.frame_1 = ttk.Frame(master)
@@ -199,12 +199,12 @@ class PokeControllerApp:
         self.control_lf.grid(column='0', padx='5', row='2', columnspan='2', sticky='nsew')
         # self.Poke_statistic_lf = ttk.Labelframe(self.frame_1)
         # self.OpenPokeButton = ttk.Button(self.Poke_statistic_lf)
-        # self.OpenPokeButton.config(text='技統計')
+        # self.OpenPokeButton.config(text='???')
         # self.OpenPokeButton.grid(padx='10', pady='10', sticky='nsew')
         # self.OpenPokeButton.rowconfigure('0', pad='0', uniform='1', weight='1')
         # self.OpenPokeButton.columnconfigure('0', pad='0', uniform='1', weight='1')
         # self.OpenPokeButton.configure(command=self.createGetFromHomeWindow)
-        # self.Poke_statistic_lf.config(height='200', text='PokemonHome連携', width='200')
+        # self.Poke_statistic_lf.config(height='200', text='PokemonHome??', width='200')
         # self.Poke_statistic_lf.grid(column='1', padx='5', row='2', sticky='nsew')
         self.lf = ttk.Labelframe(self.frame_1)
 
@@ -234,7 +234,7 @@ class PokeControllerApp:
         self.startButton.grid(column='1', padx='5', pady='5', row='1', sticky='ew')
         self.startButton.configure(command=self.startPlay)
 
-        # CustomInput初期化
+        # CustomInput initialization
         self.CustomInputFrame = g_CustomInput.CreateFrame(self.frame_1)
 
         self.Commands_f.pack(fill="both", expand=True, padx='5', pady='5', anchor=tk.E, side='top')
@@ -255,17 +255,17 @@ class PokeControllerApp:
         self.frame_1.pack(expand='true', fill='both', side='top')
         self.frame_1.columnconfigure('3', weight='1')
         '''
-        ここまで
+        Up to here
         '''
 
-        # 仮置フレームを削除
+        # Delete temporary frame
         self.frame_1_2.destroy()
 
-        # 標準出力をログにリダイレクト
+        # Redirect standard output to log
         sys.stdout = StdoutRedirector(self.logArea)
         # load settings file
         self.loadSettings()
-        # 各tk変数に設定値をセット(コピペ簡単のため)
+        # Set setting values to each tk variable (for easy copy-paste)
         self.is_show_realtime.set(self.settings.is_show_realtime.get())
         self.is_show_serial.set(self.settings.is_show_serial.get())
         self.is_use_keyboard.set(self.settings.is_use_keyboard.get())
@@ -274,7 +274,7 @@ class PokeControllerApp:
         self.com_port.set(self.settings.com_port.get())
         self.com_port_name.set(self.settings.com_port_name.get())
         self.camera_id.set(self.settings.camera_id.get())
-        # 各コンボボックスを現在の設定値に合わせて表示
+        # Display each combobox according to current setting values
         self.fps_cb.current(self.fps_cb['values'].index(self.fps.get()))
         self.show_size_cb.current(
             self.show_size_cb['values'].index(self.show_size.get())
@@ -306,7 +306,7 @@ class PokeControllerApp:
         self.activateSerial()
         self.activateKeyboard()
 
-        # CustomPreviewに置き換え
+        # Replace with CustomPreview
         self.CustomPreview = CustomPreview(self.camera, self.camera_lf)
         self.CustomPreview.grid(column='0', columnspan='7', row='2', padx='5', pady='5', sticky=tk.NSEW)
         self.CustomPreview.UpdateRunning(self.is_show_realtime.get())
@@ -367,7 +367,7 @@ class PokeControllerApp:
         elif platform.system() == "Darwin":
             cmd = 'system_profiler SPCameraDataType | grep "^    [^ ]" | sed "s/    //" | sed "s/://" '
             res = subprocess.run(cmd, stdout=subprocess.PIPE, shell=True)
-            # 出力結果の加工
+            # Process output results
             ret = res.stdout.decode('utf-8')
             cam_list = list(filter(lambda a: a != "", ret.split('\n')))
             self.camera_dic = {cam_id: camera_name for cam_id, camera_name in enumerate(cam_list)}
@@ -424,7 +424,7 @@ class PokeControllerApp:
         width, height = map(int, self.show_size.get().split("x"))
         self.preview.setShowsize(height, width)
         if self.show_size_tmp != self.show_size_cb['values'].index(self.show_size_cb.get()):
-            ret = tkmsg.askokcancel('確認', "この画面サイズに変更しますか？")
+            ret = tkmsg.askokcancel('Confirmation', "Do you want to change to this screen size?")
         else:
             return
 
@@ -508,7 +508,7 @@ class PokeControllerApp:
 
     def loadCommands(self):
         self.py_loader = CommandLoader(util.ospath('Commands/MyPythonCommands'),
-                                       PythonCommandBase.PythonCommand)  # コマンドの読み込み
+                                       PythonCommandBase.PythonCommand)  # Load commands
         self.py_classes = self.py_loader.load()
         self.setCommandItems()
         self.assignCommand()
@@ -549,8 +549,8 @@ class PokeControllerApp:
         self.assignCommand()
 
     def assignCommand(self):
-        # 選択されているコマンドを取得する
-        # pythonコマンドは画像認識を使うかどうかで分岐している
+        # Get the selected command
+        # Python commands branch depending on whether they use image recognition
         if not self.py_cb['values']:
             self.py_cur_command = None
             self.cur_command = None
@@ -560,7 +560,7 @@ class PokeControllerApp:
         if issubclass(cmd_class, CustomPythonCommand):
             self.py_cur_command = cmd_class(self.CustomPreview)
         elif issubclass(cmd_class, PythonCommandBase.ImageProcPythonCommand):
-            try:  # 画像認識の際に認識位置を表示する引数追加。互換性のため従来のはexceptに。
+            try:  # Added argument to display recognition position during image recognition. For compatibility, the conventional one is in except.
                 self.py_cur_command = cmd_class(self.camera, self.preview)
             except TypeError:
                 self.py_cur_command = cmd_class(self.camera)
@@ -571,7 +571,7 @@ class PokeControllerApp:
         self.cur_command = self.py_cur_command
 
     def reloadCommands(self):
-        # 表示しているタブを読み取って、どのコマンドを表示しているか取得、リロード後もそれが選択されるようにする
+        # Read the displayed tab to get which command is displayed, so that it remains selected after reload
         oldval_tag = self.tag_cb.get()
         oldval_py = self.py_cb.get()
 
@@ -584,7 +584,7 @@ class PokeControllerApp:
         self._logger.info("Reloaded commands.")
 
     def startPlay(self, *event):
-        # CustomInput処理
+        # CustomInput processing
         g_CustomInput.LoadFromView()
 
         if self.cur_command is None:
@@ -619,7 +619,7 @@ class PokeControllerApp:
         self.mainwindow.mainloop()
 
     def exit(self):
-        ret = tkmsg.askyesno('確認', 'Poke Controllerを終了しますか？')
+        ret = tkmsg.askyesno('Confirmation', 'Do you want to exit Poke Controller?')
         if ret:
             if self.ser.isOpened():
                 self.ser.closeSerial()
@@ -633,12 +633,12 @@ class PokeControllerApp:
 
             # save settings
             self.settings.is_show_realtime.set(self.is_show_realtime.get())
-            self.settings.is_show_serial.set(self.is_show_serial.get())
-            self.settings.is_use_keyboard.set(self.is_use_keyboard.get())
-            self.settings.fps.set(self.fps.get())
-            self.settings.show_size.set(self.show_size.get())
-            self.settings.com_port.set(self.com_port.get())
-            self.settings.camera_id.set(self.camera_id.get())
+            self.settings.is_show_serial.set(self.settings.is_show_serial.get())
+            self.settings.is_use_keyboard.set(self.settings.is_use_keyboard.get())
+            self.settings.fps.set(self.settings.fps.get())
+            self.settings.show_size.set(self.settings.show_size.get())
+            self.settings.com_port.set(self.settings.com_port.get())
+            self.settings.camera_id.set(self.settings.camera_id.get())
 
             self.settings.save()
 
@@ -675,8 +675,8 @@ class PokeControllerApp:
 
 class StdoutRedirector(object):
     """
-    標準出力をtextウィジェットにリダイレクトするクラス
-    重いので止めました →# update_idletasks()で出力のたびに随時更新(従来はfor loopのときなどにまとめて出力されることがあった)
+    A class that redirects standard output to a text widget.
+    I stopped it because it's heavy ? # With update_idletasks(), it updates every time output occurs (previously, it was sometimes output in batches during for loops, etc.)
     """
 
     def __init__(self, text_widget):

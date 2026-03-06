@@ -7,12 +7,12 @@ from Commands.PythonCommandBase import ImageProcPythonCommand
 
 
 class LineSample(ImageProcPythonCommand):
-    NAME = 'LINE通知サンプル'
+    NAME = 'LINE notification sample'
 
     def __init__(self, cam):
         super().__init__(cam)
 
     def do(self):
-        self.LINE_text("これはデフォルトのトークンへの通知")
-        self.LINE_text("これは他のトークンへのテキスト通知", token='token_2')
-        self.LINE_image("これは他のトークンへのテキスト+画像通知", token='token_2')
+        self.LINE_text("This is a notification to the default token")
+        self.LINE_text("This is a text notification to another token", token='token_2')
+        self.LINE_image("This is a text + image notification to another token", token='token_2')

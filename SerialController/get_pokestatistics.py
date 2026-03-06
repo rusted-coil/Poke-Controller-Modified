@@ -8,7 +8,7 @@ import pandas as pd
 import requests
 
 
-# ポケモンホームからデータを引っ張ってくるGUI
+# GUI to fetch data from Pokemon Home
 def get_rank_match_result():
     path = 'db/rank_match.json'
     headers_rank_match_list = {
@@ -29,29 +29,29 @@ def get_rank_match_result():
         hours = days * 24 + seconds // 3600
         minutes = (seconds % 3600) // 60
         seconds = seconds % 60
-        print("最後にランクマッチデータをDLしたのは{0}時間{1}分{2}秒前".format(hours, minutes, seconds))
+        print("Last downloaded rank match data {0} hours {1} minutes {2} seconds ago".format(hours, minutes, seconds))
 
-    # ファイルが存在しないまたは最後のDLから24時間経っているときは新しくダウンロードする
+    # If file doesn't exist or 24 hours have passed since last download, download new data
     if not os.path.exists(path) or hours >= 24:
         try:
-            print("最新のランクマッチのデータをダウンロード中…", end="")
+            print("Downloading latest rank match data...", end="")
             response = requests.post('https://api.battle.pokemon-home.com/cbd/competition/rankmatch/list',
                                      headers=headers_rank_match_list,
                                      data=data)
-            print("完了。保存中…", end="")
+            print("Complete. Saving...", end="")
             data_ = response.json()
             with open(path, 'w') as outfile:
                 json.dump(data_, outfile, indent=4)
-            print("完了。")
+            print("Complete.")
         except:
             data_ = None
-            print("Error: レスポンスが得られませんでした。")
+            print("Error: Could not get response.")
             if os.path.exists(path):
-                print("過去にDLしたデータを利用してデータ取得を試みます。")
+                print("Attempting to retrieve data using previously downloaded data.")
                 with open(path, "r") as json_file:
                     data_ = json.load(json_file, encoding="utf-8")
     else:
-        print("過去にDLしたランクマッチのデータを利用します。")
+        print("Using previously downloaded rank match data.")
         with open(path, "r") as json_file:
             data_ = json.load(json_file, encoding="utf-8")
     return data_
@@ -60,13 +60,13 @@ def get_rank_match_result():
 class GetFromHomeGUI:
     def __init__(self, root, season, is_SingleBattle):
         self.poke_window = tk.Toplevel(root)
-        self.poke_window.title('Pokemon Home連携')
+        self.poke_window.title('Pokemon Home Integration')
         # self.poke_window.geometry("%dx%d%+d%+d" % (600, 300, 250, 125))
         self.poke_window.resizable(False, False)
 
-        self.select_RaB = tk.ttk.LabelFrame(self.poke_window, text="ランクシーズン/バトル種選択")
-        self.poke_select_frame = tk.ttk.LabelFrame(self.poke_window, width=1080, height=300, text="ポケモン選択")
-        self.poke_stats_frame = tk.ttk.LabelFrame(self.poke_window, width=1080, height=300, text="統計値")
+        self.select_RaB = tk.ttk.LabelFrame(self.poke_window, text="Rank Season/Battle Type Selection")
+        self.poke_select_frame = tk.ttk.LabelFrame(self.poke_window, width=1080, height=300, text="Pokémon Selection")
+        self.poke_stats_frame = tk.ttk.LabelFrame(self.poke_window, width=1080, height=300, text="Statistics")
 
         self.select_RaB.grid(row=0, column=0, sticky='news')
 
@@ -84,19 +84,19 @@ class GetFromHomeGUI:
         self.poke_data = None
 
         self.season_list = list(self.rank_match_result_dic['list'].keys())[::-1]
-        self.rule_list = ["シングル", "ダブル"]
+        self.rule_list = ["Single", "Double"]
 
-        self.columns = ('図鑑番号', '種類', 'フォルム名', 'タイプ1', 'タイプ2', 'フォルム(番号)')
+        self.columns = ('Pokedex Number', 'Species', 'Form Name', 'Type 1', 'Type 2', 'Form (Number)')
 
-        self.columns_d = ('技', '技の採用率(%)',
-                          '特性', '特性の採用率(%)',
-                          '性格', '性格の採用率(%)',
-                          '持ち物', '持ち物の採用率(%)',
-                          '一緒に採用されるポケモン',
-                          'このポケモンを倒した技', '倒した技の割合(%)',
-                          'このポケモンを倒したポケモン',
-                          'このポケモンが相手を倒した技', '相手を倒した技の割合(%) ',
-                          'このポケモンが倒したポケモン')
+        self.columns_d = ('Move', 'Move Adoption Rate (%)',
+                          'Ability', 'Ability Adoption Rate (%)',
+                          'Nature', 'Nature Adoption Rate (%)',
+                          'Held Item', 'Held Item Adoption Rate (%)',
+                          'Pokémon Adopted Together',
+                          'Moves That Defeated This Pokémon', 'Defeated Move Ratio (%)',
+                          'Pokémon That Defeated This Pokémon',
+                          'Moves This Pokémon Used to Defeat Opponents', 'Defeated Opponent Move Ratio (%)',
+                          'Pokémon This Pokémon Defeated')
 
         self.treeview = ttk.Treeview(self.poke_select_frame, columns=self.columns, show='headings', selectmode='browse')
         self.treeview_detail = ttk.Treeview(self.poke_stats_frame, columns=self.columns_d, show='headings',
@@ -107,8 +107,8 @@ class GetFromHomeGUI:
         self.hsb = ttk.Scrollbar(self.poke_select_frame, orient="horizontal", command=self.treeview.xview)
         self.vsb_d = ttk.Scrollbar(self.poke_stats_frame, orient="vertical", command=self.treeview_detail.yview)
         self.hsb_d = ttk.Scrollbar(self.poke_stats_frame, orient="horizontal", command=self.treeview_detail.xview)
-        self.season_l = ttk.Label(self.select_RaB, text="ランクシーズン")
-        self.isSingle_l = ttk.Label(self.select_RaB, text="バトルの種類")
+        self.season_l = ttk.Label(self.select_RaB, text="Rank Season")
+        self.isSingle_l = ttk.Label(self.select_RaB, text="Battle Type")
         self.season = season
         self.isSingle = is_SingleBattle
         # self.getRankPokeData_Button = ttk.Button(self.poke_view_frame, text="取得", command=self.getRankPokeData)
@@ -194,7 +194,7 @@ class GetFromHomeGUI:
         beatWaza = [["", ""] for _ in range(10)]
         beatPokemon = [["", ""] for _ in range(10)]
         for i in range(10):
-            try:  # 凄く強引な実装なので修正したい…
+            try:  # This is a very forceful implementation, need to fix it…
                 try:
                     waza[i] = [self.poke_data[values[0]][values[5]]["temoti"]["waza"][i]["id"],
                                self.poke_data[values[0]][values[5]]["temoti"]["waza"][i]["val"]]
@@ -260,7 +260,7 @@ class GetFromHomeGUI:
         self.getPokeDetail()
 
     def getRankPokeData(self, *event):
-        if self.isSingle.get() == "シングル":
+        if self.isSingle.get() == "Single":
             isSingle = 1
         else:
             isSingle = 0
@@ -353,7 +353,7 @@ class GetFromHomeGUI:
         tv.heading(col, text=col, command=lambda _col=col: self.treeview_sort_column(tv, _col, not reverse))
 
     def dl_rank_poke_data(self, isSingle, rst, ts2):
-        l = "Single" if self.isSingle.get() == "シングル" else "Double"
+        l = "Single" if self.isSingle.get() == "Single" else "Double"
         path = "db/pokedata_Season" + self.season.get() + "_" + l + "Battle" + ".json"
         headers_rank_poke_data = {
             'user-agent': 'Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Mobile Safari/537.36',
@@ -370,11 +370,11 @@ class GetFromHomeGUI:
             hours = days * 24 + seconds // 3600
             minutes = (seconds % 3600) // 60
             seconds = seconds % 60
-            print("最後にシーズン{0}/{1}バトルのデータをDLしたのは{2}時間{3}分{4}秒前".format(
+            print("Last downloaded Season {0}/{1} Battle data {2} hours {3} minutes {4} seconds ago".format(
                 self.season.get(), self.isSingle.get(), hours, minutes, seconds))
         if not os.path.exists(path) or hours >= 24 or (rst == 2 and not os.path.exists(path)):
             try:
-                print("シーズン{}/{}バトルのポケモンデータをダウンロード中…".format(
+                print("Downloading Season {}/{} Battle Pokémon data...".format(
                     self.season.get(), self.isSingle.get()), end="")
 
                 for i in range(1, 6):
@@ -386,20 +386,20 @@ class GetFromHomeGUI:
                         headers=headers_rank_poke_data
                     )
                     _ = response.json()
-                    print("{}/5 完了".format(i))
+                    print("{}/5 Complete".format(i))
                     poke_dic.update(_)
-                print("保存中…", end="")
+                print("Saving...", end="")
                 with open(path, 'w') as outfile:
                     json.dump(poke_dic, outfile, indent=4)
-                print("完了。")
+                print("Complete.")
             except:
-                print("Error: レスポンスが得られませんでした。")
+                print("Error: Could not get response.")
                 if os.path.exists(path):
-                    print("過去にDLしたデータを利用します。")
+                    print("Using previously downloaded data.")
                     with open(path, "r") as json_file:
                         poke_dic = json.load(json_file, encoding="utf-8")
         else:
-            print("過去にDLしたデータを利用します。")
+            print("Use data that you have downloaded in the past.")
             with open(path, "r") as json_file:
                 poke_dic = json.load(json_file, encoding="utf-8")
 
