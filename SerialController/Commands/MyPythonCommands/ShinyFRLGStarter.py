@@ -6,10 +6,10 @@ from Commands.Keys import Direction, Button, Hat
 from Commands.CustomPythonCommandBase import CustomPythonCommand
 from ImageProcessRequest import Rect
 
-# シンボル前でレポートした状態で話しかけられる所に立ってスタート
+# Start by standing in a position where you can talk to the symbol after reporting.
 class ShinyFRLGStarter(CustomPythonCommand):
     TAG = 'FRLG'
-    NAME = 'FRLG御三家色厳選'
+    NAME = 'FRLG Shiny Starter'
 
     def __init__(self, preview):
         super().__init__(preview)
@@ -20,9 +20,9 @@ class ShinyFRLGStarter(CustomPythonCommand):
         while True:
             self.Reset(f1)
             self.wait(f2 / 60.0)
-            for i in range(20): # ポケモンを貰う
+            for i in range(20): # Receive Pokemon
                 self.press(Button.A, 0.05, 0.2)
-            for i in range(20): # ニックネームをつけない
+            for i in range(20): # Don't give nickname
                 self.press(Button.B, 0.05, 0.2)
             self.wait(3.0)
             self.press(Button.X, 0.05, 0.5)
@@ -39,7 +39,7 @@ class ShinyFRLGStarter(CustomPythonCommand):
                     f1 += 1
             else:
                 print('f1: ' + str(f1) + ' / f2: ' + str(f2))
-                # 色違い
+                # Shiny
                 break
 
     def CheckFrame(self):
@@ -55,7 +55,7 @@ class ShinyFRLGStarter(CustomPythonCommand):
         self.press(Button.A)
         self.wait(2.0)
         self.press(Button.A)
-        self.wait(2.0 + f1 / 60.0) # タイトル画面で待機
+        self.wait(2.0 + f1 / 60.0) # Wait on title screen
         self.press(Button.A, 0.05, 3.0)
         self.press(Button.A, 0.05, 1.0)
-        self.press(Button.B, 0.05, 2.0) # あらすじスキップ
+        self.press(Button.B, 0.05, 2.0) # Skip synopsis

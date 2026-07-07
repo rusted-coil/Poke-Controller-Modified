@@ -30,7 +30,7 @@ class Line_Notify:
 
     def open_file_with_utf8(self):
         """
-        utf-8 のファイルを BOM ありかどうかを自動判定して読み込む
+        Automatically detect if a UTF-8 file has BOM and load it
         """
         line_token_path = os.path.join(os.path.dirname(__file__), 'line_token.ini')
         is_with_bom = self.is_utf8_file_with_bom(line_token_path)
@@ -42,7 +42,7 @@ class Line_Notify:
 
     def is_utf8_file_with_bom(self, filename):
         """
-        utf-8 ファイルが BOM ありかどうかを判定する
+        Determine if a UTF-8 file has BOM
         """
         line_first = open(filename, encoding='utf-8').readline()
         return line_first[0] == '\ufeff'
@@ -58,7 +58,7 @@ class Line_Notify:
 
     def send_text(self, notification_message, token='token'):
         """
-        LINEにテキストを通知する
+        Send text notification to LINE
         """
         line_notify_api = 'https://notify-api.line.me/api/notify'
         try:
@@ -66,19 +66,19 @@ class Line_Notify:
             data = {'Message': f'{notification_message}'}
             self.res = requests.post(line_notify_api, headers=headers, data=data)
             if self.res.status_code == 200:
-                print("[LINE]テキストを送信しました。")
+                print("[LINE]Text sent.")
                 self._logger.info("Send text")
             else:
-                print("[LINE]テキストの送信に失敗しました。")
+                print("[LINE]Failed to send text.")
                 self._logger.error("Failed to send text")
         except KeyError:
-            print('token名が間違っています')
+            print('Incorrect token name')
             self._logger.error('Using the wrong token')
 
     def send_text_n_image(self, notification_message, token='token'):
         """
-        カメラが開いていないときはテキストのみを通知し、
-        開いているときはテキストと画像を通知する
+        Notify only text when camera is not open,
+        and notify text and image when open
         """
         try:
             if self.camera is None:
@@ -89,9 +89,9 @@ class Line_Notify:
             image_bgr = self.camera.readFrame()
             image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
             image = Image.fromarray(image_rgb)
-            png = io.BytesIO()  # 空のio.BytesIOオブジェクトを用意
-            image.save(png, format='png')  # 空のio.BytesIOオブジェクトにpngファイルとして書き込み
-            b_frame = png.getvalue()  # io.BytesIOオブジェクトをbytes形式で読みとり
+            png = io.BytesIO()  # Create an empty io.BytesIO object
+            image.save(png, format='png')  # Write PNG file to the empty io.BytesIO object
+            b_frame = png.getvalue()  # Read io.BytesIO object as bytes
 
             line_notify_api = 'https://notify-api.line.me/api/notify'
             headers = {'Authorization': f'Bearer {self.token_list[token]}'}
@@ -99,13 +99,13 @@ class Line_Notify:
             files = {'imageFile': b_frame}
             self.res = requests.post(line_notify_api, headers=headers, params=data, files=files)
             if self.res.status_code == 200:
-                print("[LINE]テキストと画像を送信しました。")
+                print("[LINE]Text and image sent.")
                 self._logger.info("Send image with text")
             else:
-                print("[LINE]テキストと画像の送信に失敗しました。")
+                print("[LINE]Failed to send text and image.")
                 self._logger.error("Failed to send image with text")
         except KeyError:
-            print('token名が間違っています')
+            print('Incorrect token name')
             self._logger.error('Using the wrong token')
 
     def getRateLimit(self):
@@ -136,9 +136,9 @@ class Line_Notify:
 
 if __name__ == "__main__":
     '''
-    status  HTTPステータスコードに準拠した値
-       200  成功時
-       401  アクセストークンが無効
+    status  HTTP status code compliant value
+       200  On success
+       401  Invalid access token
     '''
     LINE = Line_Notify()
     print(LINE)

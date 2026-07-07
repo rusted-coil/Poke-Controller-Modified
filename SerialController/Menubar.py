@@ -29,13 +29,13 @@ class PokeController_Menubar(tk.Menu):
         tk.Menu.__init__(self, self.root, **kw)
         self.menu = tk.Menu(self, tearoff='false')
         self.menu_command = tk.Menu(self, tearoff='false')
-        self.add(tk.CASCADE, menu=self.menu, label='メニュー')
-        self.menu.add(tk.CASCADE, menu=self.menu_command, label='コマンド')
+        self.add(tk.CASCADE, menu=self.menu, label='Menu')
+        self.menu.add(tk.CASCADE, menu=self.menu_command, label='Commands')
 
         self.menu.add('separator')
-        self.menu.add('command', label='設定(dummy)')
+        self.menu.add('command', label='Settings (dummy)')
         # TODO: setup command_id_arg 'false' for menuitem.
-        self.menu.add('command', command=self.exit, label='終了')
+        self.menu.add('command', command=self.exit, label='Exit')
 
         self.AssignMenuCommand()
 
@@ -43,9 +43,9 @@ class PokeController_Menubar(tk.Menu):
 
     def AssignMenuCommand(self):
         self._logger.debug("Assigning menu command")
-        self.menu_command.add('command', command=self.OpenPokeHomeCoop, label='Pokemon Home 連携')
-        self.menu_command.add('command', command=self.OpenKeyConfig, label='キーコンフィグ')
-        self.menu_command.add('command', command=self.ResetWindowSize, label='画面サイズのリセット')
+        self.menu_command.add('command', command=self.OpenPokeHomeCoop, label='Pokemon Home Integration')
+        self.menu_command.add('command', command=self.OpenKeyConfig, label='Key Configuration')
+        self.menu_command.add('command', command=self.ResetWindowSize, label='Reset Window Size')
 
     # TODO: setup command_id_arg 'false' for menuitem.
 
