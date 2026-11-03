@@ -11,7 +11,7 @@ from time import sleep
 
 from PIL import Image, ImageTk, ImageDraw
 
-from ImageProcessRequest import ScreenshotRequest, TemplateExistRequest, TemplatePositionRequest
+from ImageProcessRequest import ScreenshotRequest, TemplateExistRequest, TemplatePositionRequest, PixelColorMatchRequest
 
 class CancelRequest():
     pass
@@ -133,3 +133,7 @@ class CustomPreview(tk.Frame):
     # テンプレートマッチングを行い、最も類似度の高い中心座標を返すリクエストを実行します。
     def RequestTemplatePosition(self, parentCommand, templatePath, targetRect=None, isUseGrayScale=True, threshold=0.7, timeout=1.0):
         return self.RequestImpl(parentCommand, TemplatePositionRequest(templatePath, targetRect, isUseGrayScale, threshold), timeout)
+
+    def RequestPixelColorMatch(self, parentCommand, x, y, expectedBGR, torelance=10):
+        result = self.RequestImpl(parentCommand, PixelColorMatchRequest(x, y, expectedBGR, tolerance=10, targetRect=None), 0.0)
+        return result if not result is None else False

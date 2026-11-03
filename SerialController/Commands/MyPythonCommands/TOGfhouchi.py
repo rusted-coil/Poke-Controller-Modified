@@ -12,7 +12,6 @@ class TOGfhouchi(CustomPythonCommand):
         super().__init__(preview)
 
     def do(self):
-        stickInput = Direction(Stick.LEFT, -90, showName='DOWN_LEFT')
         self.hold(Button.B)
         while True:
             self.hold(Direction.DOWN)
