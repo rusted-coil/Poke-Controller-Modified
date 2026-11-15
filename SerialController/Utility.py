@@ -35,7 +35,19 @@ def getClassesInModule(module):
 
 def getModuleNames(base_path):
     filenames = browseFileNames(path=base_path, ext='.py', name_only=False)
-    return [name[:-3].replace(os.sep, '.') for name in filenames]
+    names = []
+    for filename in sorted(filenames):
+        path = os.path.normpath(filename)
+        # A package initializer is the package itself, not a second module
+        # called `package.__init__` (which would execute it twice).
+        if os.path.basename(path) == '__init__.py':
+            path = os.path.dirname(path)
+        else:
+            path = path[:-3]
+        name = path.replace(os.sep, '.')
+        if name not in names:
+            names.append(name)
+    return names
 
 
 def importAllModules(base_path, mod_names=None):

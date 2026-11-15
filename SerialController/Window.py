@@ -516,7 +516,14 @@ class PokeControllerApp:
     def _getCommandTag(self, cmd_class):
         return getattr(cmd_class, 'TAG', 'Default')
 
-    def setCommandItems(self, selected_tag=None, selected_command=None):
+    def _getSelectedCommandKey(self):
+        index = self.py_cb.current()
+        if 0 <= index < len(self.filtered_py_classes):
+            cmd_class = self.filtered_py_classes[index]
+            return (cmd_class.__module__, cmd_class.__name__)
+        return None
+
+    def setCommandItems(self, selected_tag=None, selected_command=None, selected_command_key=None):
         tags = sorted({self._getCommandTag(c) for c in self.py_classes})
         self.tag_cb['values'] = ['All'] + tags
 
@@ -536,7 +543,11 @@ class PokeControllerApp:
             self.filtered_py_classes = [c for c in self.py_classes if self._getCommandTag(c) == current_tag]
 
         self.py_cb['values'] = [c.NAME for c in self.filtered_py_classes]
-        if selected_command in self.py_cb['values']:
+        selected_index = next((i for i, c in enumerate(self.filtered_py_classes)
+                               if (c.__module__, c.__name__) == selected_command_key), None)
+        if selected_index is not None:
+            self.py_cb.current(selected_index)
+        elif selected_command in self.py_cb['values']:
             self.py_cb.set(selected_command)
         elif self.py_cb['values']:
             self.py_cb.current(0)
@@ -545,7 +556,9 @@ class PokeControllerApp:
 
     def selectTag(self, event=None):
         oldval_py = self.py_cb.get()
-        self.setCommandItems(selected_tag=self.tag_cb.get(), selected_command=oldval_py)
+        old_command_key = self._getSelectedCommandKey()
+        self.setCommandItems(selected_tag=self.tag_cb.get(), selected_command=oldval_py,
+                             selected_command_key=old_command_key)
         self.assignCommand()
 
     def assignCommand(self):
@@ -571,14 +584,30 @@ class PokeControllerApp:
         self.cur_command = self.py_cur_command
 
     def reloadCommands(self):
+        command_thread = getattr(self.cur_command, 'thread', None)
+        if self.startButton['text'] == 'Stop' or (command_thread is not None and command_thread.is_alive()):
+            self._logger.warning('Cannot reload commands while a command is running.')
+            tkmsg.showwarning('再読み込みできません', '実行中のスクリプトを停止してから再読み込みしてください。')
+            return
+
         # 表示しているタブを読み取って、どのコマンドを表示しているか取得、リロード後もそれが選択されるようにする
         oldval_tag = self.tag_cb.get()
         oldval_py = self.py_cb.get()
+        old_command_key = self._getSelectedCommandKey()
 
-        self.py_classes = self.py_loader.reload()
+        try:
+            reloaded_classes = self.py_loader.reload()
+        except Exception as exc:
+            self._logger.exception('Failed to reload command modules.')
+            tkmsg.showerror('スクリプトの再読み込みに失敗しました',
+                            '変更内容を確認してください。直前のコマンド一覧を維持します。\n\n{}: {}'.format(
+                                type(exc).__name__, exc))
+            return
+        self.py_classes = reloaded_classes
 
         # Restore the command selecting state if possible
-        self.setCommandItems(selected_tag=oldval_tag, selected_command=oldval_py)
+        self.setCommandItems(selected_tag=oldval_tag, selected_command=oldval_py,
+                             selected_command_key=old_command_key)
         self.assignCommand()
         print('Finished reloading command modules.')
         self._logger.info("Reloaded commands.")
